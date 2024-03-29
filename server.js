@@ -1,6 +1,6 @@
 // Import required modules
 const express = require('express');
-const { executeQuery } = require('./database');
+const { executeQuery, client } = require('./database');
 
 // Create an Express application
 const app = express();
@@ -13,15 +13,17 @@ app.get('/', (req, res) => {
 });
 
 app.get('/students', async (req, res) => {
-  try {
-    const students = await executeQuery('SELECT * FROM students');
-    res.json(students);
-    console.log("test")
-    console.log(students)
-  } catch (error) {
-    console.error('Error fetching students:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+  const result = await client.query('SELECT * FROM students');
+  console.log(result.rows);
+  // try {
+  //   const students = await executeQuery('SELECT * FROM students');
+  //   res.json(students);
+  //   console.log("test")
+  //   console.log(students)
+  // } catch (error) {
+  //   console.error('Error fetching students:', error);
+  //   res.status(500).json({ error: 'Internal Server Error' });
+  // }
 });
 
 // Start the server and listen on the specified port

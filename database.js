@@ -22,5 +22,6 @@ const executeQuery = async (query) => {
 };
 
 module.exports = {
-    executeQuery
+    executeQuery,
+    client
 };
