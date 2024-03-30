@@ -6,8 +6,8 @@ const flash = require("express-flash");
 const session = require("express-session");
 const { executeQuery, client } = require('./database');
 
-const initializePassport = require("./config");
-initializePassport(passport);
+const { initialize, type } = require("./config");
+
 // Create an Express application
 const app = express();
 const port = 4000; // Port number to listen on
@@ -28,8 +28,9 @@ app.use(
 );
 
 // Funtion inside passport which initializes passport
-app.use(passport.initialize());
+initialize(passport);
 // Store our variables to be persisted across the whole session. Works with app.use(Session) above
+app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
@@ -37,18 +38,12 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-
 app.get("/users/login", checkAuthenticated, (req, res) => {
   res.render("login.ejs");
 });
 
 app.get("/users/register",checkAuthenticated, (req, res) => {
   res.render("register.ejs");
-});
-
-app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
-  console.log(req.isAuthenticated());
-  res.render("dashboard", { user: req.user.full_name });
 });
 
 app.get("/users/logout", (req, res) => {
@@ -60,26 +55,21 @@ app.get("/users/logout", (req, res) => {
   });
 });
 
-
 app.post("/users/register", async (req, res) => {
-  let { name, email, password, password2 } = req.body;
-
+  let { name, email, password, password2, accountType } = req.body;
   let errors = [];
 
   console.log({
     name,
     email,
     password,
-    password2
+    password2,
+    accountType
   });
 
   if (!name || !email || !password || !password2) {
     errors.push({ message: "Please enter all fields" });
   }
-
-  // if (password.length < 6) {
-  //   errors.push({ message: "Password must be a least 6 characters long" });
-  // }
 
   if (password !== password2) {
     errors.push({ message: "Passwords do not match" });
@@ -89,36 +79,60 @@ app.post("/users/register", async (req, res) => {
     res.render("register", { errors, name, email, password, password2 });
   } else {
     hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
-    // Validation passed
+    
     client.query(
-      `SELECT * FROM member
+      `SELECT * FROM profile
         WHERE email = $1`,
       [email],
       (err, results) => {
         if (err) {
           console.log(err);
         }
-        console.log(results.rows);
 
         if (results.rows.length > 0) {
           errors.push({ message: "Email already registered" });
-
           return res.render("register", { errors, name, email, password, password2 });
         } else {
+          if(accountType=="member"){
+            client.query(
+              `INSERT INTO member (full_name, email, plan, password_hash)
+                  VALUES ($1, $2, $3, $4)
+                  RETURNING id, password_hash`,
+              [name, email, "Free", hashedPassword],
+              (err, results) => {
+                if (err) {
+                  throw err;
+                }
+                req.flash("success_msg", "You are now registered. Please log in");
+                res.redirect("/users/login");
+              }
+            );
+          } else if(accountType=="trainer"){
+            client.query(
+              `INSERT INTO trainer (full_name, email, password_hash)
+                  VALUES ($1, $2, $3)
+                  RETURNING id, password_hash`,
+              [name, email, hashedPassword],
+              (err, results) => {
+                if (err) {
+                  throw err;
+                }
+                req.flash("success_msg", "You are now registered. Please log in");
+                res.redirect("/users/login");
+              }
+            );
+          }
+          
+          // Add to profile
           client.query(
-            `INSERT INTO member (full_name, email, plan, password_hash)
-                VALUES ($1, $2, $3, $4)
-                RETURNING member_id, password_hash`,
-            [name, email, "Free", hashedPassword],
+            `INSERT INTO profile (entity_type, full_name, email)
+                VALUES ($1, $2, $3)
+                RETURNING profile_id`,
+            [accountType, name, email],
             (err, results) => {
               if (err) {
                 throw err;
               }
-              console.log(results.rows);
-              req.flash("success_msg", "You are now registered. Please log in");
-              res.redirect("/users/login");
-              console.log("test");
             }
           );
         }
@@ -135,6 +149,20 @@ app.post(
     failureFlash: true
   })
 );
+
+app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
+  // console.log("type is" + type);
+  // console.log(req.user);
+  const type = req.user.type;
+  if (type === 'member') {
+    res.render("dashboard", { user: req.user.full_name });
+  } else if (type === 'trainer') {
+    res.render("trainerDashboard", { user: req.user.full_name });
+  } else {
+    // Handle other roles or invalid cases
+    res.redirect('/');
+  }
+});
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
