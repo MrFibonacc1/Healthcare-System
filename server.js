@@ -7,6 +7,7 @@ const session = require("express-session");
 const { executeQuery, client } = require('./database');
 
 const { initialize, type } = require("./config");
+const e = require('express');
 
 // Create an Express application
 const app = express();
@@ -15,6 +16,8 @@ const port = 4000; // Port number to listen on
 app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 app.use(express.static('public'));
+app.use(express.static('assets'));
+
 
 app.use(
   session({
@@ -46,6 +49,7 @@ app.get("/users/register",checkAuthenticated, (req, res) => {
   res.render("register.ejs");
 });
 
+
 app.get("/users/logout", (req, res) => {
   req.logout(function(err) {
     if (err) {
@@ -54,6 +58,113 @@ app.get("/users/logout", (req, res) => {
     res.redirect('/');
   });
 });
+
+
+app.post("/users/editProfile", async (req, res) => {
+  // console.log(req);
+  let {name, email, NewPassword, NewPassword2, OldPassword} = req.body;
+  let errors = [];
+  console.log({
+    name,
+    email,
+    NewPassword,
+    NewPassword2,
+    OldPassword,
+    
+  });
+  console.log(req.user.full_name);
+
+  if (!OldPassword) {
+    errors.push({ message: "Please enter current Password" });
+  }
+
+  if (NewPassword !== NewPassword2) {
+    errors.push({ message: "Passwords do not match" });
+  }
+
+  if (NewPassword !== NewPassword2) {
+    errors.push({ message: "Passwords do not match" });
+  }
+
+  if(email){
+      client.query(
+        `SELECT * FROM profile
+          WHERE email = $1`,
+        [email],
+        (err,results) => {
+          if (err) {
+            console.log(err);
+          }
+          if (results.rows.length > 0) {
+            errors.push({ message: "Email already registered" });
+          }
+          
+        }
+      )
+  }
+  boolean = false;
+
+  bcrypt.compare(OldPassword, req.user.password_hash, (err, isMatch) => {
+    if (err) {
+      console.log(err);
+    }
+    if (isMatch) {
+      boolean = true;
+    } else {
+      //password is incorrect
+      errors.push({ message: "Password is wrong" });
+    }
+  });
+
+  if (errors.length > 0) {
+    res.render("profile", { errors, user: req.user.full_name, email:req.user.email, plan:req.user.plan });
+  } else {
+    if(!name){
+      name = req.user.full_name;
+    }
+    if(!email){
+      email = req.user.email;
+    }
+    if(!NewPassword){
+      NewPassword = req.user.password_hash;
+    }else{
+      NewPassword = await bcrypt.hash(NewPassword, 10);
+    }
+    const entityType = req.user.type;
+    console.log(entityType);
+    
+    client.query(
+      `UPDATE profile
+      SET full_name = $1, email = $2
+      WHERE email = $3`,
+      [name, email, req.user.email],
+      (err,results) => {
+        if (err) {
+          console.log(err);
+        }
+      }
+    )
+
+    client.query(
+      `UPDATE ${entityType}
+      SET full_name = $1, email = $2, password_hash = $3
+      WHERE email = $4`,
+      [name, email, NewPassword, req.user.email],
+      (err,results) => {
+        if (err) {
+          console.log(err);
+        }
+
+      }
+    )
+
+    res.redirect("/users/profile");
+
+    
+  }
+
+})
+
 
 app.post("/users/register", async (req, res) => {
   let { name, email, password, password2, accountType } = req.body;
@@ -64,7 +175,7 @@ app.post("/users/register", async (req, res) => {
     email,
     password,
     password2,
-    accountType
+    accountType,
   });
 
   if (!name || !email || !password || !password2) {
@@ -155,13 +266,26 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
   // console.log(req.user);
   const type = req.user.type;
   if (type === 'member') {
-    res.render("dashboard", { user: req.user.full_name });
+    res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan });
   } else if (type === 'trainer') {
-    res.render("trainerDashboard", { user: req.user.full_name });
+    res.render("trainerDashboard", { user: req.user.full_name, plan:req.user.plan });
   } else {
     // Handle other roles or invalid cases
     res.redirect('/');
   }
+});
+
+app.get("/users/profile", checkNotAuthenticated, (req, res) => {
+  res.render("profile.ejs", {user: req.user.full_name, email:req.user.email, pass: req.user.password_hash, plan:req.user.plan});
+  // const type = req.user.type;
+  // if (type === 'member') {
+  //   res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan });
+  // } else if (type === 'trainer') {
+  //   res.render("trainerDashboard", { user: req.user.full_name, plan:req.user.plan });
+  // } else {
+  //   // Handle other roles or invalid cases
+  //   res.redirect('/');
+  // }
 });
 
 function checkAuthenticated(req, res, next) {
