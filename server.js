@@ -60,6 +60,55 @@ app.get("/users/logout", (req, res) => {
 });
 
 
+
+app.post("/users/data", async (req, res) => {
+  console.log("tttrstststset")
+  // console.log(req);
+  let {height, weight, country} = req.body;
+  bmi = 2;
+  let errors = [];
+  console.log({
+    height,
+    weight,
+    country
+  });
+
+  // console.log(req.user.full_name);
+  if(!height){
+    height = req.user.height
+  }
+  if(!weight){
+    weight = req.user.weight
+  }
+  if(!bmi){
+    bmi = req.user.bmi
+  }
+  if(!country){
+    country = req.user.country
+  }
+
+  client.query(
+    `UPDATE profile
+    SET country = $1, weight_kg = $2, height_cm = $3, bmi = $4
+    WHERE email = $5`,
+    [country, weight, height, bmi,  req.user.email],
+    (err,results) => {
+      if (err) {
+        console.log(err);
+      }
+      req.user.weight = weight;
+      req.user.country = country;
+      req.user.height = height;
+      req.user.bmi = bmi;
+
+    }
+  )
+  res.redirect("/users/data");
+
+
+})
+
+
 app.post("/users/editProfile", async (req, res) => {
   // console.log(req);
   let {name, email, NewPassword, NewPassword2, OldPassword} = req.body;
@@ -132,7 +181,7 @@ app.post("/users/editProfile", async (req, res) => {
     }
     const entityType = req.user.type;
     console.log(entityType);
-    
+
     client.query(
       `UPDATE profile
       SET full_name = $1, email = $2
@@ -268,12 +317,19 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
   if (type === 'member') {
     res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan });
   } else if (type === 'trainer') {
-    res.render("trainerDashboard", { user: req.user.full_name, plan:req.user.plan });
+    res.render("trainerDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type });
   } else {
     // Handle other roles or invalid cases
     res.redirect('/');
   }
 });
+
+app.get("/users/data", checkNotAuthenticated, (req, res) => {
+  console.log("weight is" + req.user.weight)
+  res.render("data.ejs", {user: req.user.full_name, email:req.user.email, plan:req.user.plan, height:req.user.height, 
+    weight:req.user.weight, bmi:req.user.bmi, country:req.user.country });
+})
+
 
 app.get("/users/profile", checkNotAuthenticated, (req, res) => {
   res.render("profile.ejs", {user: req.user.full_name, email:req.user.email, pass: req.user.password_hash, plan:req.user.plan});

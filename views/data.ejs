@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Corona Admin</title>
+    <title>Health Metrics</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="/assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="/assets/vendors/css/vendor.bundle.base.css">
@@ -41,7 +41,7 @@
                   <span><%= plan %> Member</span>
                 </div>
               </div>
-              <a href="#" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
+              <a id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
               <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
                 <a href="#" class="dropdown-item preview-item">
                   <div class="preview-thumbnail">
@@ -378,27 +378,27 @@
                     <div class="card">
                       <div class="card-body">
                         <h4 class="card-title">Horizontal Two column</h4>
-                        <form class="form-sample">
+                        <form href="/users/data" method="POST" class="form-sample">
                           <p class="card-description"> Personal info </p>
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">First Name</label>
+                                <label class="col-sm-3 col-form-label">Height</label>
                                 <div class="col-sm-9">
-                                  <input type="text" class="form-control" />
+                                  <input type="text" name="height" class="form-control" placeholder="<%= height %>" />
                                 </div>
                               </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Last Name</label>
+                                <label class="col-sm-3 col-form-label">Weight</label>
                                 <div class="col-sm-9">
-                                  <input type="text" class="form-control" />
+                                  <input type="text" name="weight" placeholder="<%= weight %>" class="form-control" />
                                 </div>
                               </div>
                             </div>
                           </div>
-                          <div class="row">
+                          <!-- <div class="row">
                             <div class="col-md-6">
                               <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Gender</label>
@@ -418,7 +418,7 @@
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group row">
@@ -434,6 +434,14 @@
                               </div>
                             </div>
                             <div class="col-md-6">
+                                <div class="form-group row">
+                                  <label class="col-sm-3 col-form-label">Country</label>
+                                  <div class="col-sm-9">
+                                    <input type="text" name="country" placeholder = "<%= country %>" class="form-control" />
+                                  </div>
+                                </div>
+                              </div>
+                            <!-- <div class="col-md-6">
                               <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Membership</label>
                                 <div class="col-sm-4">
@@ -449,10 +457,10 @@
                                   </div>
                                 </div>
                               </div>
-                            </div>
+                            </div> -->
                           </div>
-                          <p class="card-description"> Address </p>
-                          <div class="row">
+                          <!-- <p class="card-description"> Address </p> -->
+                          <!-- <div class="row">
                             <div class="col-md-6">
                               <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Address 1</label>
@@ -469,8 +477,8 @@
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <div class="row">
+                          </div> -->
+                          <!-- <div class="row">
                             <div class="col-md-6">
                               <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Address 2</label>
@@ -487,30 +495,9 @@
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <div class="row">
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">City</label>
-                                <div class="col-sm-9">
-                                  <input type="text" class="form-control" />
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Country</label>
-                                <div class="col-sm-9">
-                                  <select class="form-control">
-                                    <option>America</option>
-                                    <option>Italy</option>
-                                    <option>Russia</option>
-                                    <option>Britain</option>
-                                  </select>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                          </div> -->
+                          <button type="submit" class="btn btn-primary mr-2">Submit</button>
+
                         </form>
                       </div>
                     </div>

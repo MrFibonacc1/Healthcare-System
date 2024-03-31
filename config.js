@@ -94,8 +94,22 @@ function initialize(passport) {
       console.log(`ID is ${results.rows[0].id}`);
       console.log(results.rows[0]);
       data = results.rows[0];
-      data.type = type;
-      return done(null, data);
+      email = results.rows[0].email;
+      client.query(`SELECT * FROM profile WHERE email = $1`, [email], (err, results) => {
+        if (err) {
+          return done(err);
+        }
+        data.country = results.rows[0].country;
+        data.weight = results.rows[0].weight_kg;
+        data.height = results.rows[0].height_cm;
+        data.bmi = results.rows[0].bmi;
+        console.log("this");
+        console.dir(data);
+
+        data.type = type;
+        return done(null, data);
+      });
+      
     });
   });
 }
