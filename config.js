@@ -105,11 +105,26 @@ function initialize(passport) {
         data.bmi = results.rows[0].bmi;
         data.profileID = results.rows[0].profile_id;
         data.steps = results.rows[0].stepgoal;
-        console.log("this");
-        console.dir(data);
+        
+        client.query(`SELECT * FROM healthtracker WHERE profile_id = $1`, [data.profileID], (err, results) => {
+          if (err) {
+            return done(err);
+          }
+          if(results.rows.length > 0){
+            data.tracker = results.rows
+          }
+          console.log("this");
+          console.dir(data);
+  
+          data.type = type;
+          return done(null, data);
+        });
 
-        data.type = type;
-        return done(null, data);
+        // console.log("this");
+        // console.dir(data);
+
+        // data.type = type;
+        // return done(null, data);
       });
       
     });

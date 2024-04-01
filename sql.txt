@@ -33,3 +33,12 @@ CREATE TABLE Profile (
 	BMI INT,
     stepGoal INT
 );
+
+CREATE TABLE healthTracker (
+    id SERIAL PRIMARY KEY,
+    profile_id INT REFERENCES Profile(profile_id),
+    Date DATE,
+    calsEaten INT,
+    calsBurnt INT,
+    steps INT
+);

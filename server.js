@@ -220,6 +220,63 @@ app.post("/users/editProfile", async (req, res) => {
 
 })
 
+app.post("/users/health", async (req, res) => {
+  // console.log(req);
+  let {calEaten, calBurnt, stepsTaken, date} = req.body;
+  let errors = [];
+  console.log({
+    calEaten,
+    calBurnt,
+    stepsTaken,
+    date,
+  });
+
+  
+
+  if (!calEaten) {
+    calEaten = 0;
+  }
+
+  if (!calBurnt) {
+    calBurnt = 0;
+  }
+
+  if (!stepsTaken) {
+    errors.push({ message: "Please enter steps taken" });
+  }
+  if (!date) {
+    errors.push({ message: "Please enter date" });
+  }
+
+
+  if (errors.length > 0) {
+    res.render("health.ejs", {plan:req.user.plan, errors:errors, tracker:req.user.tracker,
+      weight:req.user.weight, bmi:req.user.bmi, country:req.user.country, type:req.user.type, stepGoal:req.user.steps,  });
+  } else {
+
+    client.query(
+      `INSERT INTO healthtracker (profile_id, date, calseaten, calsburnt, steps)
+          VALUES ($1, $2, $3, $4, $5)
+          RETURNING id`,
+      [req.user.profileID, date, calEaten, calBurnt,stepsTaken],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+      }
+    );
+
+
+
+    res.redirect("/users/health");
+
+    
+  }
+
+})
+
+
+
 
 app.post("/users/register", async (req, res) => {
   let { name, email, password, password2, accountType } = req.body;
@@ -356,20 +413,12 @@ app.get("/users/data", checkNotAuthenticated, (req, res) => {
 
 app.get("/users/health", checkNotAuthenticated, (req, res) => {
   res.render("health.ejs", {user: req.user.full_name, email:req.user.email, plan:req.user.plan, height:req.user.height, 
-    weight:req.user.weight, bmi:req.user.bmi, country:req.user.country, type:req.user.type });
+    weight:req.user.weight, bmi:req.user.bmi, country:req.user.country, type:req.user.type, stepGoal:req.user.steps,
+  tracker: req.user.tracker });
 })
 
 app.get("/users/profile", checkNotAuthenticated, (req, res) => {
   res.render("profile.ejs", {user: req.user.full_name, email:req.user.email, pass: req.user.password_hash, plan:req.user.plan});
-  // const type = req.user.type;
-  // if (type === 'member') {
-  //   res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan });
-  // } else if (type === 'trainer') {
-  //   res.render("trainerDashboard", { user: req.user.full_name, plan:req.user.plan });
-  // } else {
-  //   // Handle other roles or invalid cases
-  //   res.redirect('/');
-  // }
 });
 
 function checkAuthenticated(req, res, next) {
