@@ -30,5 +30,6 @@ CREATE TABLE Profile (
     country VARCHAR(50),
 	weight_KG INT,
 	height_cm INT,
-	BMI INT
+	BMI INT,
+    stepGoal INT
 );

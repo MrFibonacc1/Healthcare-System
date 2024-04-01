@@ -64,13 +64,14 @@ app.get("/users/logout", (req, res) => {
 app.post("/users/data", async (req, res) => {
   console.log("tttrstststset")
   // console.log(req);
-  let {height, weight, country} = req.body;
+  let {height, weight, country, steps} = req.body;
   bmi = 2;
   let errors = [];
   console.log({
     height,
     weight,
-    country
+    country,
+    steps
   });
 
   // console.log(req.user.full_name);
@@ -86,12 +87,15 @@ app.post("/users/data", async (req, res) => {
   if(!country){
     country = req.user.country
   }
+  if(!steps){
+    steps = req.user.steps
+  }
 
   client.query(
     `UPDATE profile
-    SET country = $1, weight_kg = $2, height_cm = $3, bmi = $4
-    WHERE email = $5`,
-    [country, weight, height, bmi,  req.user.email],
+    SET country = $1, weight_kg = $2, height_cm = $3, bmi = $4, stepgoal = $5
+    WHERE email = $6`,
+    [country, weight, height, bmi, steps, req.user.email],
     (err,results) => {
       if (err) {
         console.log(err);
@@ -100,6 +104,8 @@ app.post("/users/data", async (req, res) => {
       req.user.country = country;
       req.user.height = height;
       req.user.bmi = bmi;
+      req.user.steps = steps;
+
 
     }
   )
@@ -253,7 +259,7 @@ app.post("/users/register", async (req, res) => {
           errors.push({ message: "Email already registered" });
           return res.render("register", { errors, name, email, password, password2 });
         } else {
-          if(accountType=="member"){
+          if(accountType=="Member"){
             client.query(
               `INSERT INTO member (full_name, email, plan, password_hash)
                   VALUES ($1, $2, $3, $4)
@@ -285,10 +291,10 @@ app.post("/users/register", async (req, res) => {
           
           // Add to profile
           client.query(
-            `INSERT INTO profile (entity_type, full_name, email)
-                VALUES ($1, $2, $3)
+            `INSERT INTO profile (entity_type, full_name, email, stepGoal)
+                VALUES ($1, $2, $3, $4)
                 RETURNING profile_id`,
-            [accountType, name, email],
+            [accountType, name, email, 10000],
             (err, results) => {
               if (err) {
                 throw err;
@@ -314,22 +320,44 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
   // console.log("type is" + type);
   // console.log(req.user);
   const type = req.user.type;
-  if (type === 'member') {
-    res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan });
-  } else if (type === 'trainer') {
-    res.render("trainerDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type });
-  } else {
-    // Handle other roles or invalid cases
-    res.redirect('/');
-  }
+  res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type });
+  // if (type === 'member') {
+  //   res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type });
+  // } else if (type === 'trainer') {
+  //   res.render("trainerDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type });
+  // } else {
+  //   // Handle other roles or invalid cases
+  //   res.redirect('/');
+  // }
+});
+
+app.get("/trainer/members", checkNotAuthenticated, (req, res) => {
+  client.query(
+    `SELECT * FROM profile WHERE entity_type = 'Member'`,
+    (err, results) => {
+      if (err) {
+        throw err;
+      }
+      const members = results.rows;
+      res.render("members.ejs", {user: req.user.full_name, email:req.user.email, members:members});
+
+    }
+  );
+
+
 });
 
 app.get("/users/data", checkNotAuthenticated, (req, res) => {
   console.log("weight is" + req.user.weight)
   res.render("data.ejs", {user: req.user.full_name, email:req.user.email, plan:req.user.plan, height:req.user.height, 
-    weight:req.user.weight, bmi:req.user.bmi, country:req.user.country });
+    weight:req.user.weight, bmi:req.user.bmi, country:req.user.country, type:req.user.type, steps:req.user.steps});
 })
 
+
+app.get("/users/health", checkNotAuthenticated, (req, res) => {
+  res.render("health.ejs", {user: req.user.full_name, email:req.user.email, plan:req.user.plan, height:req.user.height, 
+    weight:req.user.weight, bmi:req.user.bmi, country:req.user.country, type:req.user.type });
+})
 
 app.get("/users/profile", checkNotAuthenticated, (req, res) => {
   res.render("profile.ejs", {user: req.user.full_name, email:req.user.email, pass: req.user.password_hash, plan:req.user.plan});

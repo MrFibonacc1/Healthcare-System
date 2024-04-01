@@ -373,145 +373,67 @@
               </nav>
             </div>
             <div class="row">
-
-                <div class="col-12 grid-margin">
+                <div class="col-md-6 grid-margin stretch-card">
                     <div class="card">
-                      <div class="card-body">
-                        <h4 class="card-title">Horizontal Two column</h4>
-                        <form href="/users/data" method="POST" class="form-sample">
-                          <p class="card-description"> Personal info </p>
-                          <div class="row">
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Height</label>
-                                <div class="col-sm-9">
-                                  <input type="text" name="height" class="form-control" placeholder="<%= height %>" />
+                        <div class="card-body">
+                            <h4 class="card-title">Health Tracker</h4>
+                            <p class="card-description"> Health Tracker </p>
+                            <form class="forms-sample">
+                                <div class="form-group">
+                                    <label for="exampleInputUsername1">Calories Eaten Today</label>
+                                    <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Cals">
                                 </div>
-                              </div>
-                            </div>
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Weight</label>
-                                <div class="col-sm-9">
-                                  <input type="text" name="weight" placeholder="<%= weight %>" class="form-control" />
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Calories Burned Today</label>
+                                    <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Cals">
                                 </div>
-                              </div>
-                            </div>
-                          </div>
-                          <!-- <div class="row">
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Gender</label>
-                                <div class="col-sm-9">
-                                  <select class="form-control">
-                                    <option>Male</option>
-                                    <option>Female</option>
-                                  </select>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Walks Taken Today</label>
+                                    <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Steps">
                                 </div>
-                              </div>
-                            </div>
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Date of Birth</label>
-                                <div class="col-sm-9">
-                                  <input class="form-control" placeholder="dd/mm/yyyy" />
+                                <div class="form-group">
+                                    <label for="exampleInputDate">Date</label>
+                                    <input type="date" class="form-control" id="exampleInputDate" placeholder="Date">
                                 </div>
-                              </div>
-                            </div>
-                          </div> -->
-                          <div class="row">
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Category</label>
-                                <div class="col-sm-9">
-                                  <select class="form-control">
-                                    <option>Category1</option>
-                                    <option>Category2</option>
-                                    <option>Category3</option>
-                                    <option>Category4</option>
-                                  </select>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                  <label class="col-sm-3 col-form-label">Country</label>
-                                  <div class="col-sm-9">
-                                    <input type="text" name="country" placeholder = "<%= country %>" class="form-control" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="col-md-6">
-                                <div class="form-group row">
-                                  <label class="col-sm-3 col-form-label">Steps Target</label>
-                                  <div class="col-sm-9">
-                                    <input type="text" name="steps" placeholder = "<%= steps %>" class="form-control" />
-                                  </div>
-                                </div>
-                              </div>
-                            <!-- <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Membership</label>
-                                <div class="col-sm-4">
-                                  <div class="form-check">
-                                    <label class="form-check-label">
-                                      <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios1" value="" checked> Free </label>
-                                  </div>
-                                </div>
-                                <div class="col-sm-5">
-                                  <div class="form-check">
-                                    <label class="form-check-label">
-                                      <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios2" value="option2"> Professional </label>
-                                  </div>
-                                </div>
-                              </div>
-                            </div> -->
-                          </div>
-                          <!-- <p class="card-description"> Address </p> -->
-                          <!-- <div class="row">
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Address 1</label>
-                                <div class="col-sm-9">
-                                  <input type="text" class="form-control" />
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">State</label>
-                                <div class="col-sm-9">
-                                  <input type="text" class="form-control" />
-                                </div>
-                              </div>
-                            </div>
-                          </div> -->
-                          <!-- <div class="row">
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Address 2</label>
-                                <div class="col-sm-9">
-                                  <input type="text" class="form-control" />
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Postcode</label>
-                                <div class="col-sm-9">
-                                  <input type="text" class="form-control" />
-                                </div>
-                              </div>
-                            </div>
-                          </div> -->
-                          <button type="submit" class="btn btn-primary mr-2">Submit</button>
 
-                        </form>
-                      </div>
+                                <button type="submit" class="btn btn-primary mr-2">Add</button>
+                                <button class="btn btn-dark">Cancel</button>
+                            </form>
+                        </div>
                     </div>
-                  </div>
-
+                </div>
+            
+                <div class="col-md-6 grid-margin stretch-card">
+                    <!-- <div class="card"> -->
+                        <div class="card-body">
+                            <h4 class="card-title">10,000 Steps Tracker</h4>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th> Progress </th>
+                                            <th> Remaining </th>
+                                            <th> Date </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                            <td> $ 77.99 </td>
+                                            <td> May 15, 2015 </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    <!-- </div> -->
+                </div>
             </div>
+            
           </div>
           <!-- content-wrapper ends -->
           <!-- partial:../../partials/_footer.html -->
@@ -549,3 +471,34 @@
     <!-- End custom js for this page -->
   </body>
 </html>
+
+<!-- <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Members</h4>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th> Progress </th>
+                <th> Amount </th>
+                <th> Deadline </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+
+                <td>
+                  <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </td>
+                <td> $ 77.99 </td>
+                <td> May 15, 2015 </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div> -->

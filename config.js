@@ -103,6 +103,8 @@ function initialize(passport) {
         data.weight = results.rows[0].weight_kg;
         data.height = results.rows[0].height_cm;
         data.bmi = results.rows[0].bmi;
+        data.profileID = results.rows[0].profile_id;
+        data.steps = results.rows[0].stepgoal;
         console.log("this");
         console.dir(data);
 
