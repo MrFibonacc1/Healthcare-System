@@ -240,7 +240,7 @@ app.post("/admin/supplies", async (req, res) => {
 
   if (!name) {
     errors.push({ message: "Please Enter Room Name" });
-    res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, errors1:errors});
+    res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, errors1:errors, equipment:req.user.equipment});
   } else {
     // Check if a room with the same name already exists
     client.query(
@@ -253,7 +253,7 @@ app.post("/admin/supplies", async (req, res) => {
         if (results.rows.length > 0) {
           errors.push({ message: "Room Already Exists" });
           // Render the form again with the errors
-          res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, errors1:errors});
+          res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, errors1:errors, equipment:req.user.equipment});
         } else {
           // If the room doesn't exist, proceed with insertion
           client.query(
@@ -274,6 +274,53 @@ app.post("/admin/supplies", async (req, res) => {
     );
   }
 });
+
+app.post("/admin/supplies2", async (req, res) => {
+  let {equipment, desc} = req.body;
+  let errors = [];
+
+  if (!desc) {
+    errors.push({ message: "Please Enter Equipment Description" });
+  }
+
+  if (!equipment) {
+    errors.push({ message: "Please Enter Equipment Name" });
+    res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment, errors2:errors});
+  } else {
+    // Check if a room with the same name already exists
+    client.query(
+      `SELECT * FROM equipment WHERE equipment_name = $1`,
+      [equipment],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        if (results.rows.length > 0) {
+          errors.push({ message: "Equipment Already Exists" });
+          // Render the form again with the errors
+          res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment, errors2:errors});
+        } else {
+          // If the room doesn't exist, proceed with insertion
+          client.query(
+            `INSERT INTO equipment (equipment_name, description)
+            VALUES ($1, $2)
+            RETURNING id`,
+            [equipment, desc],
+            (err, results) => {
+              if (err) {
+                throw err;
+              }
+              // Redirect to the supplies page after successful insertion
+              res.redirect("/admin/supplies");
+            }
+          );
+        }
+      }
+    );
+  }
+});
+
+
 
 
 app.post("/users/health", async (req, res) => {
@@ -386,7 +433,7 @@ app.post("/users/register", async (req, res) => {
                 res.redirect("/users/login");
               }
             );
-          } else if(accountType=="trainer"){
+          } else if(accountType=="Trainer"){
             client.query(
               `INSERT INTO trainer (full_name, email, password_hash)
                   VALUES ($1, $2, $3)
@@ -481,9 +528,13 @@ app.get("/trainer/members", checkNotAuthenticated, (req, res) => {
 
 app.get("/admin/supplies", checkNotAuthenticated, (req, res) => {
   console.log(req.user.rooms);
-  res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms});
+  res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment});
 })
 
+//Change to correct make bookings file
+app.get("/trainer/bookings", checkNotAuthenticated, (req, res) => {
+  res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment});
+})
 
 
 app.get("/users/data", checkNotAuthenticated, (req, res) => {

@@ -120,12 +120,21 @@ function initialize(passport) {
               if (err) {
                 return done(err);
               }
-              console.log("saefaf aacdqadca f")
               if(results.rows.length > 0){
                 data.rooms = results.rows
-                console.log(data.rooms);
-                return done(null, data);
               }
+              client.query(`SELECT * FROM Equipment`, (err, results) => {
+                if (err) {
+                  return done(err);
+                }
+                if(results.rows.length > 0){
+                  data.equipment = results.rows
+                  console.log(data.equipment);
+                }
+                return done(null, data);
+                
+              })
+
             })
           }else{
             console.log("this");
