@@ -220,6 +220,62 @@ app.post("/users/editProfile", async (req, res) => {
 
 })
 
+
+
+app.post("/admin/supplies", async (req, res) => {
+  let {name, size, location, description} = req.body;
+  let errors = [];
+
+  if (!size) {
+    errors.push({ message: "Please Enter Room Size" });
+  }
+
+  if (!location) {
+    errors.push({ message: "Please Enter Room Location" });
+  }
+  
+  if (!description) {
+    errors.push({ message: "Please Enter Room Description" });
+  }
+
+  if (!name) {
+    errors.push({ message: "Please Enter Room Name" });
+    res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, errors1:errors});
+  } else {
+    // Check if a room with the same name already exists
+    client.query(
+      `SELECT * FROM rooms WHERE room_name = $1`,
+      [name],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        if (results.rows.length > 0) {
+          errors.push({ message: "Room Already Exists" });
+          // Render the form again with the errors
+          res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, errors1:errors});
+        } else {
+          // If the room doesn't exist, proceed with insertion
+          client.query(
+            `INSERT INTO rooms (room_name, location, size, description)
+            VALUES ($1, $2, $3, $4)
+            RETURNING id`,
+            [name, location, size, description],
+            (err, results) => {
+              if (err) {
+                throw err;
+              }
+              // Redirect to the supplies page after successful insertion
+              res.redirect("/admin/supplies");
+            }
+          );
+        }
+      }
+    );
+  }
+});
+
+
 app.post("/users/health", async (req, res) => {
   // console.log(req);
   let {calEaten, calBurnt, stepsTaken, date} = req.body;
@@ -377,15 +433,34 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
   // console.log("type is" + type);
   // console.log(req.user);
   const type = req.user.type;
-  res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type });
-  // if (type === 'member') {
-  //   res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type });
-  // } else if (type === 'trainer') {
-  //   res.render("trainerDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type });
-  // } else {
-  //   // Handle other roles or invalid cases
-  //   res.redirect('/');
-  // }
+  const currentDate = new Date();
+  if(type=="Admin"){
+    res.render("adminDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type});
+    return;
+  }
+
+  client.query(
+    `SELECT * FROM healthTracker
+     WHERE Date IN (
+         SELECT Date
+         FROM healthTracker
+         ORDER BY Date DESC
+         LIMIT 2
+     );`,
+    (err, results) => {
+      if (err) {
+        throw err;
+      }
+      const earlyData = results.rows;
+      console.log("tesrset")
+      console.log(JSON.stringify(earlyData));
+      res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type, tracker: req.user.tracker,
+        date:currentDate, earlyData:earlyData});
+    }
+  );
+  
+
+
 });
 
 app.get("/trainer/members", checkNotAuthenticated, (req, res) => {
@@ -403,6 +478,13 @@ app.get("/trainer/members", checkNotAuthenticated, (req, res) => {
 
 
 });
+
+app.get("/admin/supplies", checkNotAuthenticated, (req, res) => {
+  console.log(req.user.rooms);
+  res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms});
+})
+
+
 
 app.get("/users/data", checkNotAuthenticated, (req, res) => {
   console.log("weight is" + req.user.weight)

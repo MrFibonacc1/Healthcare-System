@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>FitTrack <%= type %></title>
+    <title>C</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="/assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="/assets/vendors/css/vendor.bundle.base.css">
@@ -27,14 +27,8 @@
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-            <a class="sidebar-brand brand-logo" href="/index.html">
-                <span style="color: white;">Fit Track</span>
-              </a>
-              <a class="sidebar-brand brand-logo-mini" href="/index.html">
-                <span style="color: white;">AB</span> <!-- You can put an abbreviation or logo initials here -->
-              </a>
-          <!-- <a class="sidebar-brand brand-logo" href="index.html"><img src="/assets/images/logo.svg" alt="logo" /></a> -->
-          <!-- <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="/assets/images/logo-mini.svg" alt="logo" /></a> -->
+          <a class="sidebar-brand brand-logo" href="index.html"><img src="/assets/images/logo.svg" alt="logo" /></a>
+          <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="/assets/images/logo-mini.svg" alt="logo" /></a>
         </div>
         <ul class="nav">
           <li class="nav-item profile">
@@ -46,17 +40,12 @@
                 </div>
                 <div class="profile-name">
                   <h5 class="mb-0 font-weight-normal"><%= user %></h5>
-                  <span><% if (type === 'Member') { %>
-                    <span><%= plan %> <%= type %></span>
-                    <% } else { %>
-                      <span><%= type %></span>
-                    <% } %>
-                  </span>
+                  <span>Admin</span>
                 </div>
               </div>
               <a href="#" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
               <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
-                <a href="/users/profile" class="dropdown-item preview-item">
+                <a href="#" class="dropdown-item preview-item">
                   <div class="preview-thumbnail">
                     <div class="preview-icon bg-dark rounded-circle">
                       <i class="mdi mdi-settings text-primary"></i>
@@ -65,7 +54,6 @@
                   <div class="preview-item-content">
                     <p class="preview-subject ellipsis mb-1 text-small">Account settings</p>
                   </div>
-                  
                 </a>
                 <div class="dropdown-divider"></div>
                 <a href="#" class="dropdown-item preview-item">
@@ -104,14 +92,6 @@
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="/users/health">
-              <span class="menu-icon">
-                <i class="mdi mdi-playlist-play"></i>
-              </span>
-              <span class="menu-title">Add Data</span>
-            </a>
-          </li>
-          <li class="nav-item menu-items">
             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
               <span class="menu-icon">
                 <i class="mdi mdi-laptop"></i>
@@ -128,27 +108,22 @@
             </div>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="/users/data">
+            <a class="nav-link" href="/admin/supplies">
+              
               <span class="menu-icon">
                 <i class="mdi mdi-playlist-play"></i>
               </span>
-              <span class="menu-title">Health Metrics</span>
+              <span class="menu-title">Add Supplies</span>
             </a>
           </li>
-
-          <% if (type == 'trainer' ){ %>
-            <li class="nav-item menu-items">
-              <a class="nav-link" href="/trainer/members">
-                <span class="menu-icon">
-                  <i class="mdi mdi-table-large"></i>
-                </span>
-                <span class="menu-title">View Members</span>
-              </a>
-            </li>
-          <%}%>
-
-          
-          
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="pages/tables/basic-table.html">
+              <span class="menu-icon">
+                <i class="mdi mdi-table-large"></i>
+              </span>
+              <span class="menu-title">Tables</span>
+            </a>
+          </li>
           <li class="nav-item menu-items">
             <a class="nav-link" href="pages/charts/chartjs.html">
               <span class="menu-icon">
@@ -368,7 +343,7 @@
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
-                  <a href="/users/logout" class="dropdown-item preview-item">
+                  <a class="dropdown-item preview-item">
                     <div class="preview-thumbnail">
                       <div class="preview-icon bg-dark rounded-circle">
                         <i class="mdi mdi-logout text-danger"></i>
@@ -391,7 +366,7 @@
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
-            <!-- <div class="row">
+            <div class="row">
               <div class="col-12 grid-margin stretch-card">
                 <div class="card corona-gradient-card">
                   <div class="card-body py-0 px-0 px-sm-3">
@@ -412,7 +387,7 @@
                   </div>
                 </div>
               </div>
-            </div> -->
+            </div>
             <div class="row">
               <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
                 <div class="card">
@@ -420,222 +395,60 @@
                     <div class="row">
                       <div class="col-9">
                         <div class="d-flex align-items-center align-self-start">
-                          <% if (earlyData.length == 1) { %>
-                            <h3 class="mb-0"> <%= earlyData[0].calseaten %></h3>
-                        <% } else if (earlyData.length > 1) { %>
-                          <h3 class="mb-0"> <%= earlyData[1].calseaten %> </h3>
-                        <% } else { %>
-                            <h3 class="mb-0">0 cal</h3>
-                        <% } %>
-                        
-                        
-
-
-                          <% if (earlyData.length >= 2) { %>
-                            <% 
-                            const oldValue = earlyData[0].calseaten;
-                            const newValue = earlyData[1].calseaten;
-                            const percentageChange = ((newValue - oldValue) / oldValue) * 100;
-                            %>
-                            <%if (percentageChange>0){%>
-                            <p class="text-success ml-2 mb-0 font-weight-medium">
-                                <%= percentageChange.toFixed(2) %>%
-                            </p>
-                            <%} else {%>
-                              <p class="text-danger ml-2 mb-0 font-weight-medium">
-                                <%= percentageChange.toFixed(2) %>%
-                            </p>
-                            <%}%>
-                        <% } else { %>
-                            <p class="text-danger ml-2 mb-0 font-weight-medium">0%</p>
-                        <% } %>
-                        
-                        <!-- <div class="icon icon-box-danger">
-                          <span class="mdi mdi-arrow-bottom-left icon-item"></span>
-                        </div> -->
-
-
+                          <h3 class="mb-0">$12.34</h3>
+                          <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p>
                         </div>
                       </div>
-                      <%
-                      const oldValue = earlyData[0].calseaten;
-                      const newValue = earlyData[1].calseaten;
-                      const percentageChange = ((newValue - oldValue) / oldValue) * 100;
-                      
-                      if (percentageChange>0){%>
-                        <div class="col-3">
-                          <div class="icon icon-box-success ">
-                            <span class="mdi mdi-arrow-top-right icon-item"></span>
-                          </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success ">
+                          <span class="mdi mdi-arrow-top-right icon-item"></span>
                         </div>
-                        <%} else {%>
-                          <div class="col-3">
-                            <div class="icon icon-box-danger">
-                              <span class="mdi mdi-arrow-bottom-left icon-item"></span>
-                            </div>
-                          </div>
-                        <%}%>
-
-  
-
-
+                      </div>
                     </div>
-                    <h6 class="text-muted font-weight-normal">Calories Gained</h6>
+                    <h6 class="text-muted font-weight-normal">Potential growth</h6>
                   </div>
                 </div>
               </div>
-
-
-             <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-9">
-                        <div class="d-flex align-items-center align-self-start">
-                          <% if (earlyData.length == 1) { %>
-                            <h3 class="mb-0"> <%= earlyData[0].calsburnt %></h3>
-                        <% } else if (earlyData.length > 1) { %>
-                          <h3 class="mb-0"> <%= earlyData[1].calsburnt %></h3>
-                        <% } else { %>
-                            <h3 class="mb-0">0 cal</h3>
-                        <% } %>
-                        
-                        
-
-
-                          <% if (earlyData.length >= 2) { %>
-                            <% 
-                            const old = earlyData[0].calsburnt;
-                            const newV = earlyData[1].calsburnt;
-                            const percentageChange = ((newV - old) / old) * 100;
-                            %>
-                            <%if (percentageChange>0){%>
-                            <p class="text-success ml-2 mb-0 font-weight-medium">
-                                <%= percentageChange.toFixed(2) %>%
-                            </p>
-                            <%} else {%>
-                              <p class="text-danger ml-2 mb-0 font-weight-medium">
-                                <%= percentageChange.toFixed(2) %>%
-                            </p>
-                            <%}%>
-                        <% } else { %>
-                            <p class="text-danger ml-2 mb-0 font-weight-medium">0%</p>
-                        <% } %>
-                        
-                        <!-- <div class="icon icon-box-danger">
-                          <span class="mdi mdi-arrow-bottom-left icon-item"></span>
-                        </div> -->
-
-
-                        </div>
-                      </div>
-                      <%
-                       oldVal = earlyData[0].calseaten;
-                       newVal = earlyData[1].calseaten;
-                       Pchange = ((newVal - oldVal) / oldVal) * 100;
-                      
-                      if (Pchange>0){%>
-                        <div class="col-3">
-                          <div class="icon icon-box-success ">
-                            <span class="mdi mdi-arrow-top-right icon-item"></span>
-                          </div>
-                        </div>
-                        <%} else {%>
-                          <div class="col-3">
-                            <div class="icon icon-box-danger">
-                              <span class="mdi mdi-arrow-bottom-left icon-item"></span>
-                            </div>
-                          </div>
-                        <%}%>
-
-  
-
-
-                    </div>
-                    <h6 class="text-muted font-weight-normal">Calories Burnt</h6>
-                  </div>
-                </div>
-              </div>
-
-
-
               <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="row">
                       <div class="col-9">
                         <div class="d-flex align-items-center align-self-start">
-                          <% if (earlyData.length == 1) { %>
-                            <h3 class="mb-0"> <%= earlyData[0].steps %></h3>
-                        <% } else if (earlyData.length > 1) { %>
-                          <h3 class="mb-0"> <%= earlyData[1].steps %></h3>
-                        <% } else { %>
-                            <h3 class="mb-0">0 cal</h3>
-                        <% } %>
-                        
-                        
-
-
-                          <% if (earlyData.length >= 2) { %>
-                            <% 
-                            const old = earlyData[0].steps;
-                            const newV = earlyData[1].steps;
-                            const percentageChange = ((newV - old) / old) * 100;
-                            %>
-                            <%if (percentageChange>0){%>
-                            <p class="text-success ml-2 mb-0 font-weight-medium">
-                                <%= percentageChange.toFixed(2) %>%
-                            </p>
-                            <%} else {%>
-                              <p class="text-danger ml-2 mb-0 font-weight-medium">
-                                <%= percentageChange.toFixed(2) %>%
-                            </p>
-                            <%}%>
-                        <% } else { %>
-                            <p class="text-danger ml-2 mb-0 font-weight-medium">0%</p>
-                        <% } %>
-                        
-                        <!-- <div class="icon icon-box-danger">
-                          <span class="mdi mdi-arrow-bottom-left icon-item"></span>
-                        </div> -->
-
-
+                          <h3 class="mb-0">$17.34</h3>
+                          <p class="text-success ml-2 mb-0 font-weight-medium">+11%</p>
                         </div>
                       </div>
-                      <%
-                       oldVal = earlyData[0].steps;
-                       newVal = earlyData[1].steps;
-                       Pchange = ((newVal - oldVal) / oldVal) * 100;
-                      
-                      if (Pchange>0){%>
-                        <div class="col-3">
-                          <div class="icon icon-box-success ">
-                            <span class="mdi mdi-arrow-top-right icon-item"></span>
-                          </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-arrow-top-right icon-item"></span>
                         </div>
-                        <%} else {%>
-                          <div class="col-3">
-                            <div class="icon icon-box-danger">
-                              <span class="mdi mdi-arrow-bottom-left icon-item"></span>
-                            </div>
-                          </div>
-                        <%}%>
-
-  
-
-
+                      </div>
                     </div>
-                    <h6 class="text-muted font-weight-normal">Steps</h6>
+                    <h6 class="text-muted font-weight-normal">Revenue current</h6>
                   </div>
                 </div>
               </div>
-
-
-
-
-
-
-
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                          <h3 class="mb-0">$12.34</h3>
+                          <p class="text-danger ml-2 mb-0 font-weight-medium">-2.4%</p>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-danger">
+                          <span class="mdi mdi-arrow-bottom-left icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">Daily Income</h6>
+                  </div>
+                </div>
+              </div>
               <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">

@@ -8,12 +8,16 @@ CREATE TABLE Member (
     registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Staff (
+CREATE TABLE Admin (
     id SERIAL PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL
 );
+
+INSERT INTO Admin (full_name, email, password_hash) 
+VALUES ('a', 'a', '$2b$10$qnhtaSzvoqvQeuxq.3mpLOffeqdnLv8HdjCRmIuW6iWQKSog6opZG');
+
 
 CREATE TABLE Trainer (
     id SERIAL PRIMARY KEY,
@@ -21,6 +25,10 @@ CREATE TABLE Trainer (
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL
 );
+
+INSERT INTO Profile (entity_type, full_name, email) 
+VALUES ('Admin', 'a', 'a');
+
 
 CREATE TABLE Profile (
     profile_id SERIAL PRIMARY KEY,
@@ -41,4 +49,18 @@ CREATE TABLE healthTracker (
     calsEaten INT,
     calsBurnt INT,
     steps INT
+);
+
+CREATE TABLE Equipment (
+    id SERIAL PRIMARY KEY,
+    equipment_name VARCHAR(255) NOT NULL,
+    description TEXT
+);
+
+CREATE TABLE Rooms (
+    id SERIAL PRIMARY KEY,
+    room_name VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    size INT NOT NULL,
+    description TEXT
 );

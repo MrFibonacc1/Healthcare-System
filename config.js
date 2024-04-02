@@ -105,6 +105,7 @@ function initialize(passport) {
         data.bmi = results.rows[0].bmi;
         data.profileID = results.rows[0].profile_id;
         data.steps = results.rows[0].stepgoal;
+        data.type = type;
         
         client.query(`SELECT * FROM healthtracker WHERE profile_id = $1`, [data.profileID], (err, results) => {
           if (err) {
@@ -113,20 +114,29 @@ function initialize(passport) {
           if(results.rows.length > 0){
             data.tracker = results.rows
           }
-          console.log("this");
-          console.dir(data);
-  
-          data.type = type;
-          return done(null, data);
+
+          if(type == "Admin"){
+            client.query(`SELECT * FROM rooms`, (err, results) => {
+              if (err) {
+                return done(err);
+              }
+              console.log("saefaf aacdqadca f")
+              if(results.rows.length > 0){
+                data.rooms = results.rows
+                console.log(data.rooms);
+                return done(null, data);
+              }
+            })
+          }else{
+            console.log("this");
+            console.dir(data);
+    
+            data.type = type;
+            return done(null, data);
+          }
+
         });
-
-        // console.log("this");
-        // console.dir(data);
-
-        // data.type = type;
-        // return done(null, data);
       });
-      
     });
   });
 }
