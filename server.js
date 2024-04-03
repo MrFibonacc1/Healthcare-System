@@ -220,6 +220,135 @@ app.post("/users/editProfile", async (req, res) => {
 
 })
 
+app.post("/trainer/session", async (req, res) => {
+  let {name, size, location, description, equipment, startTime, endTime, date} = req.body;
+  let errors = [];
+  console.log("adassdadad")
+  console.log({
+    name,
+    size,
+    location,
+    description,
+    equipment,
+    startTime,
+    endTime,
+    date,
+  });
+
+  if (!size) {
+    errors.push({ message: "Please Enter Room Size" });
+  }
+  if (!date) {
+    errors.push({ message: "Please Enter Date" });
+  }
+  if (!name) {
+    errors.push({ message: "Please Enter Session Name" });
+  }
+
+  if (!location || location == "") {
+    errors.push({ message: "Please Enter Room Location" });
+  }
+  
+  if (!description) {
+    errors.push({ message: "Please Enter Room Description" });
+  }
+  if (!startTime) {
+    errors.push({ message: "Please Enter Starting Time" });
+  }
+  if (!endTime) {
+    errors.push({ message: "Please Enter Ending Time" });
+  }
+  if (errors.length > 0) {
+    res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment, errors:errors});
+  } else {
+    client.query(
+      `SELECT * FROM sessions 
+      WHERE location = $1 
+      AND date = $2 
+      AND (start_time::time, end_time::time) OVERLAPS ($3::time, $4::time)`,
+      [location, date, startTime, endTime],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        if (results.rows.length > 0) {
+          errors.push({ message: "Conflicting Session" });
+          res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment, errors:errors});
+          return;
+        } else {
+          if(equipment){
+          data = req.user.equipment;
+          for(var i=0;i<equipment.length;i++){
+            for(var j=0; j<data.length;j++){
+              if(equipment[i] == data[j].equipment_name){
+                  client.query(
+                    `SELECT * FROM equipbooking 
+                    WHERE equipment_id = $1 
+                    AND session_id IN (
+                      SELECT id FROM sessions 
+                      WHERE date = $2 
+                      AND (start_time::time, end_time::time) OVERLAPS ($3::time, $4::time)
+                    )`,
+                    [data[j].id, date, startTime, endTime],
+                    (err, results) => {
+                        if (err) {
+                            throw err;
+                        }
+                        if (results.rows.length > 0) {
+                          errors.push({ message: `Conflicting Session for ${equipment[i]}` });
+                          res.render("trainerSession.ejs", { user: req.user.full_name, email: req.user.email, rooms: req.user.rooms, equipment: req.user.equipment, errors: errors });
+                          return;
+                        } 
+                        
+                    }
+                  );
+              }
+          }
+        }
+      }
+
+          client.query(
+            `INSERT INTO sessions (trainer_id, name, location, size, description, start_time, end_time, date)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
+            [req.user.profileID, name, location, size, description, startTime, endTime, date],
+            (err, results) => {
+              if (err) {
+                throw err;
+              }
+              const sessionId = results.rows[0].id;
+              if(equipment){
+
+                data = req.user.equipment;
+                for(var i=0;i<equipment.length;i++){
+                  for(var j=0;j<data.length;j++){
+                    if(data[j].equipment_name==equipment[i]){
+                      equipmentId = data[j].id;
+                      client.query(
+                        `INSERT INTO equipbooking (session_id, equipment_id)
+                        VALUES ($1, $2)`,
+                        [sessionId, equipmentId],
+                        (err, results) => {
+                            if (err) {
+                                throw err;
+                            }
+                        }
+                    );
+                    }
+                  }
+                }
+
+              }
+
+              // Redirect to the bookings page after successful insertion
+              res.redirect("/trainer/bookings");
+            }
+          );
+        }
+      }
+    );
+  }
+});
+
 
 
 app.post("/admin/supplies", async (req, res) => {
@@ -533,7 +662,7 @@ app.get("/admin/supplies", checkNotAuthenticated, (req, res) => {
 
 //Change to correct make bookings file
 app.get("/trainer/bookings", checkNotAuthenticated, (req, res) => {
-  res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment});
+  res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment});
 })
 
 

@@ -115,7 +115,7 @@ function initialize(passport) {
             data.tracker = results.rows
           }
 
-          if(type == "Admin"){
+          if(type == "Admin" || type == "Trainer"){
             client.query(`SELECT * FROM rooms`, (err, results) => {
               if (err) {
                 return done(err);

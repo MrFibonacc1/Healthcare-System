@@ -64,3 +64,25 @@ CREATE TABLE Rooms (
     size INT NOT NULL,
     description TEXT
 );
+
+CREATE TABLE sessions (
+    id SERIAL PRIMARY KEY,
+    trainer_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    size INT NOT NULL,
+    description TEXT,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    date DATE NOT NULL,
+    FOREIGN KEY (trainer_id) REFERENCES Profile(profile_id)
+);
+
+CREATE TABLE equipbooking (
+    session_id INT,
+    equipment_id INT,
+    FOREIGN KEY (session_id) REFERENCES sessions(id),
+    FOREIGN KEY (equipment_id) REFERENCES Equipment(id),
+    PRIMARY KEY (session_id, equipment_id)
+);
+
