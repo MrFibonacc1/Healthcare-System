@@ -276,36 +276,7 @@ app.post("/trainer/session", async (req, res) => {
           res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment, errors:errors});
           return;
         } else {
-          if(equipment){
-          data = req.user.equipment;
-          for(var i=0;i<equipment.length;i++){
-            for(var j=0; j<data.length;j++){
-              if(equipment[i] == data[j].equipment_name){
-                  client.query(
-                    `SELECT * FROM equipbooking 
-                    WHERE equipment_id = $1 
-                    AND session_id IN (
-                      SELECT id FROM sessions 
-                      WHERE date = $2 
-                      AND (start_time::time, end_time::time) OVERLAPS ($3::time, $4::time)
-                    )`,
-                    [data[j].id, date, startTime, endTime],
-                    (err, results) => {
-                        if (err) {
-                            throw err;
-                        }
-                        if (results.rows.length > 0) {
-                          errors.push({ message: `Conflicting Session for ${equipment[i]}` });
-                          res.render("trainerSession.ejs", { user: req.user.full_name, email: req.user.email, rooms: req.user.rooms, equipment: req.user.equipment, errors: errors });
-                          return;
-                        } 
-                        
-                    }
-                  );
-              }
-          }
-        }
-      }
+
 
           client.query(
             `INSERT INTO sessions (trainer_id, name, location, size, description, start_time, end_time, date)
@@ -316,28 +287,77 @@ app.post("/trainer/session", async (req, res) => {
                 throw err;
               }
               const sessionId = results.rows[0].id;
-              if(equipment){
+              const data = req.user.equipment;
+              console.log("first round")
+              let equipmentIds = [];
+              if(equipment.length>0){
+// Assuming 'name' variable holds the name of the equipment
+                for (let i = 0; i < equipment.length; i++) {
+                  client.query(
+                    `SELECT * FROM Equipment WHERE equipment_name = $1`,
+                    [equipment[i]], // Use equipment[i] instead of name
+                    (err, equipmentResult) => { // Use a different variable name for the result
+                      if (err) {
+                        throw err;
+                      }
 
-                data = req.user.equipment;
-                for(var i=0;i<equipment.length;i++){
-                  for(var j=0;j<data.length;j++){
-                    if(data[j].equipment_name==equipment[i]){
-                      equipmentId = data[j].id;
+                      if (equipmentResult.rows.length === 0) {
+                        console.error("Equipment not found with name:", equipment[i]);
+                        return res.status(404).send("Equipment not found");
+                      }
+
+                      const equipmentId = equipmentResult.rows[0].id;
+
                       client.query(
                         `INSERT INTO equipbooking (session_id, equipment_id)
                         VALUES ($1, $2)`,
                         [sessionId, equipmentId],
-                        (err, results) => {
-                            if (err) {
-                                throw err;
-                            }
+                        (err, insertResult) => { // Use a different variable name for the result
+                          if (err) {
+                            throw err;
+                          }
+
+                          // Handle successful insertion
+                          console.log("Equipment booking inserted successfully");
                         }
-                    );
+                      );
                     }
-                  }
+                  );
                 }
 
               }
+
+              // if(equipment.length>0){
+              //   console.log("second round")
+
+              //   data = req.user.equipment;
+              //   let equipmentIds = [];
+              //   for(var i=0;i<equipment.length;i++){
+              //     for(var j=0; j<data.length;j++){
+              //         if(equipment[i] == data[j].equipment_name){
+              //             equipmentIds.push(data[j].id); // Store equipment IDs for later use
+              //         }
+              //     }
+              //   }
+              //   console.log("data:  ")
+              //   console.log(equipment)
+              //   console.log(equipmentIds)
+
+
+              //   for (let i = 0; i < equipmentIds.length; i++) {
+                  // client.query(
+                  //     `INSERT INTO equipbooking (session_id, equipment_id)
+                  //     VALUES ($1, $2)`,
+                  //     [sessionId, equipmentIds[i]],
+                  //     (err, results) => {
+                  //         if (err) {
+                  //             throw err;
+                  //         }
+                  //     }
+                  // );
+              // }
+
+              // }
 
               // Redirect to the bookings page after successful insertion
               res.redirect("/trainer/bookings");
