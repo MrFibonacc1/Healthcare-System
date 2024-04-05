@@ -712,11 +712,9 @@ function addBooking(name, member_id, session_id, location){
     );
   }
 }
-function updateSession(name, member_id, session_id, location){
-  console.log("tet")
-  console.log({name,member_id, session_id, location })
+function updateSession(session_id){
 
-  if(name && member_id && session_id && location ){
+  if(session_id){
     client.query(
       `INSERT INTO bookings (name, member_id, session_id, location)
           VALUES ($1, $2, $3, $4)
