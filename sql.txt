@@ -65,6 +65,16 @@ CREATE TABLE Rooms (
     description TEXT
 );
 
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    type VARCHAR(50) NOT NULL,
+    person_type VARCHAR(50) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    person_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE sessions (
     id SERIAL PRIMARY KEY,
     trainer_id INT NOT NULL,
@@ -86,16 +96,6 @@ CREATE TABLE equipbooking (
     FOREIGN KEY (session_id) REFERENCES sessions(id),
     FOREIGN KEY (equipment_id) REFERENCES Equipment(id),
     PRIMARY KEY (session_id, equipment_id)
-);
-
-CREATE TABLE transactions (
-    id SERIAL PRIMARY KEY,
-    type VARCHAR(50) NOT NULL,
-    person_type VARCHAR(50) NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    person_id INT NOT NULL,
-    amount DECIMAL(10, 2) NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE bookings (

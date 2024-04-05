@@ -436,7 +436,7 @@
                           </thead>
                           <tbody>
                             <% if (typeof bookings != 'undefined') {
-                              for (let i=0; i<bookings.length; i++) {%>
+                              for (let i=0; i<bookings.length; i++){%>
                             <tr>
                               <td> <%=bookings[i].name%> </td>
                               <!-- <td>
@@ -446,15 +446,19 @@
                               </td> -->
                               <td> <%=bookings[i].trainer_name%> </td>
                               <td> <%=bookings[i].location%> </td>
-                              <td> <%=bookings[i].size%> </td>
+                              <td> <%=bookings[i].registered%>/<%=bookings[i].size%> </td>
                               <td> <%=bookings[i].start_time%> - <%=bookings[i].end_time%></td>
-
+                              <% if(bookings[i].size!=bookings[i].registered) { %>
                               <td>
                                 <button class="btn btn-primary register-btn" data-booking-id="<%= JSON.stringify(bookings[i]) %>" data-plan="<%=bookings[i].planName%>">Register</button>
                               </td>
-
+                              <%} else {%>
+                                <td>
+                                  <button class="btn btn-primary" >Full</button>
+                                </td>
                             </tr>
                             <%}
+                          }
                         }%>
 
 

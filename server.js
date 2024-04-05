@@ -746,12 +746,14 @@ app.post('/registerWithPayment', (req, res) => {
 
 
   addTransaction("Session Booking",req.user.type, req.user.full_name, req.user.profileID, amount);
-  addBooking(req.user.full_name, req.user.profileID, bookingId, location)
+  addBooking(req.user.full_name, req.user.profileID, bookingId, location);
+  updateSession(bookingId);
   // Handle the data as needed
   
 
   // Send response back if needed
-  res.send('Data received successfully!');
+  res.redirect("/members/bookings");
+
 });
 
 app.post('/bookPaid', (req, res) => {
@@ -760,13 +762,16 @@ app.post('/bookPaid', (req, res) => {
   const location = req.body['booking[location]'];
 
   addBooking(req.user.full_name, req.user.profileID, bookingId, location)
+  updateSession(bookingId);
+
 
 
   // Handle the data as needed
   console.log('Received bookingId:', bookingId);
 
   // Send response back if needed
-  res.send('Data received successfully!');
+  res.redirect("/members/bookings");
+
 });
 
 app.get("/members/bookings", checkNotAuthenticated, (req, res) => {
