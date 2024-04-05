@@ -460,13 +460,22 @@
                                 <td>
                                   <button class="btn btn-primary" >Registered</button>
                                 </td>
+                                <td>
+                                  <button class="btn btn-primary cancel-btn" data-booking-id="<%= JSON.stringify(bookings[i]) %>" data-plan="<%=bookings[i].planName%>">Cancel</button>
+                                </td>
                               <%}else if (bookings[i].size!=bookings[i].registered){%>
                                 <td>
                                   <button class="btn btn-primary register-btn" data-booking-id="<%= JSON.stringify(bookings[i]) %>" data-plan="<%=bookings[i].planName%>">Register</button>
                                 </td>
+                                <td>
+
+                                </td>
                               <%} else {%>
                                 <td>
                                   <button class="btn btn-primary" >Full</button>
+                                </td>
+                                <td>
+
                                 </td>
                             </tr>
                             <%}
@@ -547,6 +556,36 @@
 
             $.post("/registerWithPayment", { booking: booking, creditCardNumber: creditCardNumber, password: password,
             amount:amount }, function(response) {
+              console.log(response);
+            });
+          }
+        });
+      });
+
+      $(document).ready(function() {
+        $(".cancel-btn").click(function() {
+          console.log("asd")
+          var booking = $(this).data("booking-id");
+          // var booking = JSON.parse(bookingJson);
+          var planName = '<%=plan%>';
+          console.log(planName)
+          console.log(booking)
+          console.log("test");
+          // console.log(JSON.stringify(booking.id));
+
+          if (planName === 'paid') {
+            console.log("paid");
+
+
+            $.post("/bookPaidRefund", { booking: booking }, function(response) {
+              console.log(response);
+            });
+          } else if (planName === 'Free') {
+            console.log("free");
+            const amount = 9.99;
+            var creditCardNumber = prompt(`Are you sure you want to cancel and get a refund`);
+
+            $.post("/registerWithPaymentRefund", { booking: booking, amount:amount }, function(response) {
               console.log(response);
             });
           }

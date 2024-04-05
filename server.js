@@ -681,10 +681,10 @@ app.get("/trainer/members", checkNotAuthenticated, (req, res) => {
 function addTransaction(transaction_type, person_type, person_name, person_id, amount){
   if(transaction_type && person_type && person_name && person_id ){
     client.query(
-      `INSERT INTO transactions (name, person_type, type, person_id, amount)
-          VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO transactions (name, person_type, type, person_id, amount, status)
+          VALUES ($1, $2, $3, $4, $5, $6)
           RETURNING id`,
-      [person_name, person_type, transaction_type, person_id, amount],
+      [person_name, person_type, transaction_type, person_id, amount, "Success"],
       (err, results) => {
         if (err) {
           throw err;
@@ -694,6 +694,26 @@ function addTransaction(transaction_type, person_type, person_name, person_id, a
     );
   }
 }
+function refundTransaction(transaction_type, person_type, person_name, person_id){
+  if(transaction_type && person_type && person_name && person_id ){
+    client.query(
+      `UPDATE transactions
+      SET status = 'Refunded'
+      WHERE person_type = $1
+        AND name = $2
+        AND person_id = $3
+        AND type = $4`,
+      [person_type, person_name, person_id, transaction_type],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        console.log("Refunded transaction successfully")
+      }
+    );
+  }
+}
+
 function addBooking(name, member_id, session_id, location, startTime, endTime, date){
   console.log("tet")
   console.log({name,member_id, session_id, location })
@@ -713,6 +733,22 @@ function addBooking(name, member_id, session_id, location, startTime, endTime, d
     );
   }
 }
+function remmoveBooking(member_id, session_id){
+
+  if(member_id && session_id){
+    client.query(
+      `DELETE FROM bookings WHERE member_id = $1 AND session_id = $2`,
+      [member_id,session_id],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        console.log("Removed booking successfully")
+      }
+    );
+  }
+}
+
 function updateSession(session_id){
 
   if(session_id){
@@ -730,37 +766,69 @@ function updateSession(session_id){
     );
   }
 }
+function updateSessionRefund(session_id){
 
-app.post('/registerWithPayment', (req, res) => {
+  if(session_id){
+    client.query(
+      `UPDATE sessions 
+      SET registered = registered - 1 
+      WHERE id = $1`,
+      [session_id],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        console.log("Removed 1 member")
+      }
+    );
+  }
+}
+app.post('/bookPaidRefund', (req, res) => {
   // Access the data sent in the request body
 
-  // const bookingId = req.body.booking.id;
-  console.log("testttt");
-  // console.log(req.body.booking)
   console.log(JSON.stringify(req.body));
   const bookingId = req.body['booking[id]'];
-  const creditCardNumber = req.body.creditCardNumber;
-  const password = req.body.password;
+
+  console.log(req.body.booking);
+  remmoveBooking(req.user.profileID, bookingId);
+  updateSessionRefund(bookingId);
+  res.redirect("/members/bookings");
+});
+
+app.post('/registerWithPaymentRefund', (req, res) => {
+  // Access the data sent in the request body
+
+  console.log(JSON.stringify(req.body));
+  const bookingId = req.body['booking[id]'];
   const amount = req.body.amount;
   const location = req.body['booking[location]'];
   const startTime = req.body['booking[start_time]'];
   const endTime = req.body['booking[end_time]'];
   const date = req.body['booking[date]'];
 
+  console.log(req.body.booking);
+  refundTransaction("Session Booking",req.user.type, req.user.full_name, req.user.profileID);
+  remmoveBooking(req.user.profileID, bookingId);
+  updateSessionRefund(bookingId);
+  res.redirect("/members/bookings");
+});
 
+app.post('/registerWithPayment', (req, res) => {
+  // Access the data sent in the request body
+
+  console.log(JSON.stringify(req.body));
+  const bookingId = req.body['booking[id]'];
+  const amount = req.body.amount;
+  const location = req.body['booking[location]'];
+  const startTime = req.body['booking[start_time]'];
+  const endTime = req.body['booking[end_time]'];
+  const date = req.body['booking[date]'];
 
   console.log(req.body.booking);
-
-
   addTransaction("Session Booking",req.user.type, req.user.full_name, req.user.profileID, amount);
   addBooking(req.user.full_name, req.user.profileID, bookingId, location, startTime, endTime, date);
   updateSession(bookingId);
-  // Handle the data as needed
-  
-
-  // Send response back if needed
   res.redirect("/members/bookings");
-
 });
 
 app.post('/bookPaid', (req, res) => {

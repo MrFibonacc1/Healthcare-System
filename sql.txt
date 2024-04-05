@@ -70,6 +70,7 @@ CREATE TABLE transactions (
     type VARCHAR(50) NOT NULL,
     person_type VARCHAR(50) NOT NULL,
     name VARCHAR(100) NOT NULL,
+    status VARCHAR(100) NOT NULL,
     person_id INT NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
