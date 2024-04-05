@@ -694,16 +694,16 @@ function addTransaction(transaction_type, person_type, person_name, person_id, a
     );
   }
 }
-function addBooking(name, member_id, session_id, location){
+function addBooking(name, member_id, session_id, location, startTime, endTime, date){
   console.log("tet")
   console.log({name,member_id, session_id, location })
 
-  if(name && member_id && session_id && location ){
+  if(name && member_id && session_id && location && startTime && endTime && date){
     client.query(
-      `INSERT INTO bookings (name, member_id, session_id, location)
-          VALUES ($1, $2, $3, $4)
+      `INSERT INTO bookings (name, member_id, session_id, location, start_time, end_time, date)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
           RETURNING id`,
-      [name, member_id, session_id, location],
+      [name, member_id, session_id, location, startTime, endTime, date],
       (err, results) => {
         if (err) {
           throw err;
@@ -743,11 +743,17 @@ app.post('/registerWithPayment', (req, res) => {
   const password = req.body.password;
   const amount = req.body.amount;
   const location = req.body['booking[location]'];
+  const startTime = req.body['booking[start_time]'];
+  const endTime = req.body['booking[end_time]'];
+  const date = req.body['booking[date]'];
+
+
+
   console.log(req.body.booking);
 
 
   addTransaction("Session Booking",req.user.type, req.user.full_name, req.user.profileID, amount);
-  addBooking(req.user.full_name, req.user.profileID, bookingId, location);
+  addBooking(req.user.full_name, req.user.profileID, bookingId, location, startTime, endTime, date);
   updateSession(bookingId);
   // Handle the data as needed
   
@@ -761,8 +767,12 @@ app.post('/bookPaid', (req, res) => {
   // Access the data sent in the request body
   const bookingId = req.body['booking[id]'];
   const location = req.body['booking[location]'];
+  const startTime = req.body['booking[start_time]'];
+  const endTime = req.body['booking[end_time]'];
+  const date = req.body['booking[date]'];
 
-  addBooking(req.user.full_name, req.user.profileID, bookingId, location)
+
+  addBooking(req.user.full_name, req.user.profileID, bookingId, location, startTime, endTime, date)
   updateSession(bookingId);
 
 
@@ -779,9 +789,13 @@ app.get("/members/bookings", checkNotAuthenticated, (req, res) => {
   console.log("adadsads")
   const bookedSessions = req.user.booked
   let bookedIds = [];
-  for(var i=0;i<bookedSessions.length;i++){
-    bookedIds.push(bookedSessions[i].session_id);
+  if(bookedSessions){
+    for(var i=0;i<bookedSessions.length;i++){
+      bookedIds.push(bookedSessions[i].session_id);
+    }
   }
+  
+  console.log("booked ids " + bookedIds);
   console.log(bookedIds);
   res.render("bookings.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment,
   bookings:req.user.bookings, plan:req.user.plan, booked: req.user.booked, bookedIds:bookedIds});

@@ -106,6 +106,7 @@ CREATE TABLE bookings (
     session_id INT NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
+    date DATE NOT NULL,
     booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (member_id) REFERENCES profile(profile_id),
     FOREIGN KEY (session_id) REFERENCES sessions(id)

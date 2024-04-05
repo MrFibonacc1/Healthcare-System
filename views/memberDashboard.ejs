@@ -713,9 +713,25 @@
                                   <h6 class="preview-subject"><%=booked[i].name%></h6>
                                   <p class="text-muted mb-0"><%=booked[i].location%></p>
                                 </div>
+                                <div class="flex-grow">
+                                  <% 
+                                  const dateString = booked[i].date; // Assuming booked[i].date contains the date string
+                                  const date = new Date(dateString); // Convert the date string to a Date object
+                                  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                                  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                                  const dayOfWeek = daysOfWeek[date.getDay()]; // Get the day of the week
+                                  const month = months[date.getMonth()]; // Get the month
+                                  const day = date.getDate(); // Get the day of the month
+                                  const year = date.getFullYear(); // Get the year
+                                  const formattedDate = `${dayOfWeek} ${month} ${day} ${year}`; // Concatenate the components
+                                  %>
+                                  <h6 class="preview-subject"><%= formattedDate %></h6>
+                                </div>
+                                
+                                
                                 <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                                  <p class="text-muted"><%=booked[i].name%></p>
-                                  <p class="text-muted mb-0"><%=booked[i].name%> </p>
+                                  <p class="text-muted"><%=booked[i].start_time%></p>
+                                  <p class="text-muted mb-0"><%=booked[i].end_time%> </p>
                                 </div>
                               </div>
                             </div>

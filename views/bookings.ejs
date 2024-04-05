@@ -448,9 +448,15 @@
                               <td> <%=bookings[i].location%> </td>
                               <td> <%=bookings[i].registered%>/<%=bookings[i].size%> </td>
                               <td> <%=bookings[i].start_time%> - <%=bookings[i].end_time%></td>
+                              
+                              
+                              <td> <%=  bookedIds %></td>
+                              <td> <%=  bookings[i].id %></td>
 
 
-                              <% if(bookings[i].id in bookedIds) { %>
+
+                              
+                              <% if(bookedIds.includes(bookings[i].id) || bookings[i].id == bookedIds) { %>
                                 <td>
                                   <button class="btn btn-primary" >Registered</button>
                                 </td>
