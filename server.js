@@ -788,6 +788,7 @@ app.get("/users/profile", checkNotAuthenticated, (req, res) => {
   res.render("profile.ejs", {user: req.user.full_name, email:req.user.email, pass: req.user.password_hash, plan:req.user.plan});
 });
 
+//Check auth
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return res.redirect("/users/dashboard");
