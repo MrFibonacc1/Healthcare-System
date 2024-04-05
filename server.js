@@ -712,6 +712,25 @@ function addBooking(name, member_id, session_id, location){
     );
   }
 }
+function updateSession(name, member_id, session_id, location){
+  console.log("tet")
+  console.log({name,member_id, session_id, location })
+
+  if(name && member_id && session_id && location ){
+    client.query(
+      `INSERT INTO bookings (name, member_id, session_id, location)
+          VALUES ($1, $2, $3, $4)
+          RETURNING id`,
+      [name, member_id, session_id, location],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        console.log("Added booking successfully")
+      }
+    );
+  }
+}
 
 app.post('/registerWithPayment', (req, res) => {
   // Access the data sent in the request body
