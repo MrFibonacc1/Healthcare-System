@@ -716,15 +716,15 @@ function updateSession(session_id){
 
   if(session_id){
     client.query(
-      `INSERT INTO bookings (name, member_id, session_id, location)
-          VALUES ($1, $2, $3, $4)
-          RETURNING id`,
-      [name, member_id, session_id, location],
+      `UPDATE sessions 
+      SET registered = registered + 1 
+      WHERE id = $1`,
+      [session_id],
       (err, results) => {
         if (err) {
           throw err;
         }
-        console.log("Added booking successfully")
+        console.log("Added 1 member")
       }
     );
   }
