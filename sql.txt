@@ -68,9 +68,11 @@ CREATE TABLE Rooms (
 CREATE TABLE sessions (
     id SERIAL PRIMARY KEY,
     trainer_id INT NOT NULL,
+    trainer_name VARCHAR(100) NOT NULL,
     name VARCHAR(100) NOT NULL,
     location VARCHAR(255) NOT NULL,
     size INT NOT NULL,
+    registered INT NOT NULL,
     description TEXT,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
@@ -85,4 +87,28 @@ CREATE TABLE equipbooking (
     FOREIGN KEY (equipment_id) REFERENCES Equipment(id),
     PRIMARY KEY (session_id, equipment_id)
 );
+
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    type VARCHAR(50) NOT NULL,
+    person_type VARCHAR(50) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    person_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE bookings (
+    id SERIAL PRIMARY KEY,
+    member_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    location VARCHAR(100) NOT NULL,
+    session_id INT NOT NULL,
+    booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (member_id) REFERENCES profile(profile_id),
+    FOREIGN KEY (session_id) REFERENCES sessions(id)
+);
+
+
+
 

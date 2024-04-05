@@ -417,138 +417,55 @@
               </nav>
             </div>
             <div class="row">
-                <div class="col-md-6 grid-margin stretch-card">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Add Session</h4>
-                            <ul>
-                                <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
-                                <li><%= error.message %></li>
-                                <% }) %> <% } %>
-                            </ul>
-                            <p class="card-description"> Session Details </p>
-                            <form action="/trainer/session" method="POST" class="forms-sample">
-                                <div class="form-group">
-                                    <label for="exampleInputUsername1">Session Name</label>
-                                    <input type="text" name="name" class="form-control" id="exampleInputUsername1" placeholder="Name">
+
+
+                <div class="col-lg-12 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Members</h4>
+                      <div class="table-responsive">
+                        <table class="table table-striped">
+                          <thead>
+                            <tr>
+                              <th> Name </th>
+                              <th> Trainer </th>
+                              <th> Location </th>
+                              <th> Capacity </th>
+                              <th> Time </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% if (typeof bookings != 'undefined') {
+                              for (let i=0; i<bookings.length; i++) {%>
+                            <tr>
+                              <td> <%=bookings[i].name%> </td>
+                              <!-- <td>
+                                <div class="progress">
+                                  <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1">Capacity</label>
-                                    <input type="text" name="size" class="form-control" id="exampleInputUsername1" placeholder="Size">
-                                </div>
-                                <div class="form-group">
-                                  <label for="locationSelect">Location</label>
-                                  <select name="location" class="form-control" id="locationSelect">
-                                    <% if (typeof rooms != 'undefined' && rooms.length > 0) { 
-                                      for(var i=0; i<rooms.length;i++){ %>
-                                        <option value="<%= rooms[i].room_name %>"><%= rooms[i].room_name %> (<%=rooms[i].location%>)</option>
-                                      <%}
-                                    }%>
-                                  </select>
-                              </div>
-                              
+                              </td> -->
+                              <td> <%=bookings[i].trainer_name%> </td>
+                              <td> <%=bookings[i].location%> </td>
+                              <td> <%=bookings[i].size%> </td>
+                              <td> <%=bookings[i].start_time%> - <%=bookings[i].end_time%></td>
 
-                              <div class="form-group">
-                                <button type="button" onclick="toggleDropdown()" class="dropbtn form-control">Select Equipment</button>
-                                <div id="myDropdown" class="dropdown-content">
-                                  
-                                  <% if (typeof equipment != 'undefined' && equipment.length > 0) { 
-                                    for(var i=0; i<equipment.length;i++){ %>
-                                      <label><input type="checkbox" name="equipment" value="<%= equipment[i].equipment_name %>"> <%= equipment[i].equipment_name %></label>
+                              <td>
+                                <button class="btn btn-primary register-btn" data-booking-id="<%= JSON.stringify(bookings[i]) %>" data-plan="<%=bookings[i].planName%>">Register</button>
+                              </td>
 
-                                    <%}
-                                  }%>
+                            </tr>
+                            <%}
+                        }%>
 
-                                    <!-- Add more options as needed -->
-                                </div>
-                            </div>
-                            
-                            <script>
-                              // JavaScript to toggle dropdown visibility
-                              function toggleDropdown() {
-                                  $('#myDropdown').toggle();
-                              }
-                          
-                              // Close the dropdown if the user clicks outside of it
-                              window.onclick = function(event) {
-                                  if (!event.target.matches('.dropbtn') && !event.target.closest('.dropdown-content')) {
-                                      var dropdowns = document.getElementsByClassName("dropdown-content");
-                                      var i;
-                                      for (i = 0; i < dropdowns.length; i++) {
-                                          var openDropdown = dropdowns[i];
-                                          if (openDropdown.style.display === "block") {
-                                              openDropdown.style.display = "none";
-                                          }
-                                      }
-                                  }
-                              }
-                          </script>
-                          
-                              
-                              
 
-                            <div class="form-group">
-                              <label for="exampleInputStartTime">Start Time</label>
-                              <input type="time" name="startTime" class="form-control" id="exampleInputStartTime" placeholder="Start Time" step="300">
-                          </div>
-                          <div class="form-group">
-                              <label for="exampleInputEndTime">End Time</label>
-                              <input type="time" name="endTime" class="form-control" id="exampleInputEndTime" placeholder="End Time" step="300">
-                          </div>
-
-                            <div class="form-group">
-                              <label for="exampleInputDate">Date</label>
-                              <input type="date" name = "date" class="form-control" id="exampleInputDate" placeholder="Date">
-                          </div>
-            
-
-                                <div class="form-group">
-                                    <label for="exampleInputPassword1">Description</label>
-                                    <input type="text" name="description" class="form-control" id="exampleInputUsername1" placeholder="Description">
-                                </div>
-
-                                <button type="submit" class="btn btn-primary mr-2">Add</button>
-                                <button class="btn btn-dark">Cancel</button>
-                            </form>
-                        </div>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
+                  </div>
                 </div>
-            
-                <div class="col-md-6 grid-margin stretch-card">
-                    <!-- <div class="card"> -->
-                        <div class="card-body">
-                            <h4 class="card-title">Current Bookings</h4>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th> Name </th>
-                                            <th> Time </th>
-                                            <th> Location </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% if (typeof bookings != 'undefined') { 
-                                            for(var i=0; i<bookings.length;i++){
-                                              if(id == bookings[i].trainer_id){ %>
-                                                <tr>
-                                                    <td> <%= bookings[i].name  %></td>
-                                                    <td> <%= bookings[i].start_time  %> - <%= bookings[i].end_time  %></td>
-                                                    <td> <%= bookings[i].location  %></td>
-                                                </tr>
-
-                                            <%}
-                                          }
-                                         } %>
-
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    <!-- </div> -->
-                </div>
-            </div>
+  
+              </div>
 
             
             
@@ -587,36 +504,38 @@
     <script src="/assets/js/typeahead.js"></script>
     <script src="/assets/js/select2.js"></script>
     <!-- End custom js for this page -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $(".register-btn").click(function() {
+          var booking = $(this).data("booking-id");
+          // var booking = JSON.parse(bookingJson);
+          var planName = '<%=plan%>';
+          console.log(planName)
+          console.log(booking)
+          console.log("test");
+          // console.log(JSON.stringify(booking.id));
+
+          if (planName === 'paid') {
+            console.log("paid");
+
+
+            $.post("/bookPaid", { booking: booking }, function(response) {
+              console.log(response);
+            });
+          } else if (planName === 'Free') {
+            console.log("free");
+            const amount = 9.99;
+            var creditCardNumber = prompt(`Enter your credit card number, the payment will ${amount} `);
+            var password = prompt("Enter your password:");
+
+            $.post("/registerWithPayment", { booking: booking, creditCardNumber: creditCardNumber, password: password,
+            amount:amount }, function(response) {
+              console.log(response);
+            });
+          }
+        });
+      });
+    </script>
   </body>
 </html>
-
-<!-- <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Members</h4>
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th> Progress </th>
-                <th> Amount </th>
-                <th> Deadline </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-
-                <td>
-                  <div class="progress">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </td>
-                <td> $ 77.99 </td>
-                <td> May 15, 2015 </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div> -->

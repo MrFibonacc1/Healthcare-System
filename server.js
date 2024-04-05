@@ -234,6 +234,7 @@ app.post("/trainer/session", async (req, res) => {
     endTime,
     date,
   });
+  console.log(equipment);
 
   if (!size) {
     errors.push({ message: "Please Enter Room Size" });
@@ -259,7 +260,8 @@ app.post("/trainer/session", async (req, res) => {
     errors.push({ message: "Please Enter Ending Time" });
   }
   if (errors.length > 0) {
-    res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment, errors:errors});
+    res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment, errors:errors,
+      bookings:req.user.bookings, id:req.user.profileID});
   } else {
     client.query(
       `SELECT * FROM sessions 
@@ -273,15 +275,15 @@ app.post("/trainer/session", async (req, res) => {
         }
         if (results.rows.length > 0) {
           errors.push({ message: "Conflicting Session" });
-          res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment, errors:errors});
+          res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment, errors:errors,
+            bookings:req.user.bookings, id:req.user.profileID});
           return;
         } else {
 
-
           client.query(
-            `INSERT INTO sessions (trainer_id, name, location, size, description, start_time, end_time, date)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
-            [req.user.profileID, name, location, size, description, startTime, endTime, date],
+            `INSERT INTO sessions (trainer_id, trainer_name,  name, location, size, description, start_time, end_time, date, registered)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
+            [req.user.profileID, req.user.full_name, name, location, size, description, startTime, endTime, date, 0],
             (err, results) => {
               if (err) {
                 throw err;
@@ -675,6 +677,88 @@ app.get("/trainer/members", checkNotAuthenticated, (req, res) => {
 
 });
 
+function addTransaction(transaction_type, person_type, person_name, person_id, amount){
+  if(transaction_type && person_type && person_name && person_id ){
+    client.query(
+      `INSERT INTO transactions (name, person_type, type, person_id, amount)
+          VALUES ($1, $2, $3, $4, $5)
+          RETURNING id`,
+      [person_name, person_type, transaction_type, person_id, amount],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        console.log("Added transaction successfully")
+      }
+    );
+  }
+}
+function addBooking(name, member_id, session_id, location){
+  console.log("tet")
+  console.log({name,member_id, session_id, location })
+
+  if(name && member_id && session_id && location ){
+    client.query(
+      `INSERT INTO bookings (name, member_id, session_id, location)
+          VALUES ($1, $2, $3, $4)
+          RETURNING id`,
+      [name, member_id, session_id, location],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        console.log("Added booking successfully")
+      }
+    );
+  }
+}
+
+app.post('/registerWithPayment', (req, res) => {
+  // Access the data sent in the request body
+
+  // const bookingId = req.body.booking.id;
+  console.log("testttt");
+  // console.log(req.body.booking)
+  console.log(JSON.stringify(req.body));
+  const bookingId = req.body['booking[id]'];
+  const creditCardNumber = req.body.creditCardNumber;
+  const password = req.body.password;
+  const amount = req.body.amount;
+  const location = req.body['booking[location]'];
+  console.log(req.body.booking);
+
+
+  addTransaction("Session Booking",req.user.type, req.user.full_name, req.user.profileID, amount);
+  addBooking(req.user.full_name, req.user.profileID, bookingId, location)
+  // Handle the data as needed
+  
+
+  // Send response back if needed
+  res.send('Data received successfully!');
+});
+
+app.post('/bookPaid', (req, res) => {
+  // Access the data sent in the request body
+  const bookingId = req.body['booking[id]'];
+  const location = req.body['booking[location]'];
+
+  addBooking(req.user.full_name, req.user.profileID, bookingId, location)
+
+
+  // Handle the data as needed
+  console.log('Received bookingId:', bookingId);
+
+  // Send response back if needed
+  res.send('Data received successfully!');
+});
+
+app.get("/members/bookings", checkNotAuthenticated, (req, res) => {
+  res.render("bookings.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment,
+  bookings:req.user.bookings, plan:req.user.plan});
+})
+
+
+
 app.get("/admin/supplies", checkNotAuthenticated, (req, res) => {
   console.log(req.user.rooms);
   res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment});
@@ -682,7 +766,8 @@ app.get("/admin/supplies", checkNotAuthenticated, (req, res) => {
 
 //Change to correct make bookings file
 app.get("/trainer/bookings", checkNotAuthenticated, (req, res) => {
-  res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment});
+  res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment
+  , bookings:req.user.bookings, id:req.user.profileID});
 })
 
 

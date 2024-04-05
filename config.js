@@ -115,7 +115,7 @@ function initialize(passport) {
             data.tracker = results.rows
           }
 
-          if(type == "Admin" || type == "Trainer"){
+          if(type == "Admin" || type == "Trainer" || type == "Member"){
             client.query(`SELECT * FROM rooms`, (err, results) => {
               if (err) {
                 return done(err);
@@ -131,7 +131,17 @@ function initialize(passport) {
                   data.equipment = results.rows
                   console.log(data.equipment);
                 }
-                return done(null, data);
+                client.query(`SELECT * FROM sessions`, (err, results) => {
+                  if (err) {
+                    return done(err);
+                  }
+                  if(results.rows.length > 0){
+                    data.bookings = results.rows
+                    console.log(data.bookings);
+                  }
+                  return done(null, data);
+                  
+                })
                 
               })
 

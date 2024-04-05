@@ -132,6 +132,16 @@
               <span class="menu-title">Health Metrics</span>
             </a>
           </li>
+          <% if (type == 'Member' ){ %>
+            <li class="nav-item menu-items">
+              <a class="nav-link" href="/members/bookings">
+                <span class="menu-icon">
+                  <i class="mdi mdi-table-large"></i>
+                </span>
+                <span class="menu-title">View Bookings</span>
+              </a>
+            </li>
+          <%}%>
 
           <% if (type == 'Trainer' ){ %>
             <li class="nav-item menu-items">
