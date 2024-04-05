@@ -448,10 +448,16 @@
                               <td> <%=bookings[i].location%> </td>
                               <td> <%=bookings[i].registered%>/<%=bookings[i].size%> </td>
                               <td> <%=bookings[i].start_time%> - <%=bookings[i].end_time%></td>
-                              <% if(bookings[i].size!=bookings[i].registered) { %>
-                              <td>
-                                <button class="btn btn-primary register-btn" data-booking-id="<%= JSON.stringify(bookings[i]) %>" data-plan="<%=bookings[i].planName%>">Register</button>
-                              </td>
+
+
+                              <% if(bookings[i].id in bookedIds) { %>
+                                <td>
+                                  <button class="btn btn-primary" >Registered</button>
+                                </td>
+                              <%}else if (bookings[i].size!=bookings[i].registered){%>
+                                <td>
+                                  <button class="btn btn-primary register-btn" data-booking-id="<%= JSON.stringify(bookings[i]) %>" data-plan="<%=bookings[i].planName%>">Register</button>
+                                </td>
                               <%} else {%>
                                 <td>
                                   <button class="btn btn-primary" >Full</button>

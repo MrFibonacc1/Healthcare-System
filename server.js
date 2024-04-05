@@ -652,8 +652,9 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
       const earlyData = results.rows;
       console.log("tesrset")
       console.log(JSON.stringify(earlyData));
+      console.log(req.user.booked)
       res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type, tracker: req.user.tracker,
-        date:currentDate, earlyData:earlyData});
+        date:currentDate, earlyData:earlyData, booked:req.user.booked});
     }
   );
   
@@ -775,8 +776,15 @@ app.post('/bookPaid', (req, res) => {
 });
 
 app.get("/members/bookings", checkNotAuthenticated, (req, res) => {
+  console.log("adadsads")
+  const bookedSessions = req.user.booked
+  let bookedIds = [];
+  for(var i=0;i<bookedSessions.length;i++){
+    bookedIds.push(bookedSessions[i].session_id);
+  }
+  console.log(bookedIds);
   res.render("bookings.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment,
-  bookings:req.user.bookings, plan:req.user.plan});
+  bookings:req.user.bookings, plan:req.user.plan, booked: req.user.booked, bookedIds:bookedIds});
 })
 
 

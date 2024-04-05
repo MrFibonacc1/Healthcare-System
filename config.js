@@ -139,7 +139,20 @@ function initialize(passport) {
                     data.bookings = results.rows
                     console.log(data.bookings);
                   }
-                  return done(null, data);
+                  client.query(`SELECT * FROM bookings WHERE member_id = $1`,
+                  [data.profileID], 
+                  (err, results) => {
+                    if (err) {
+                      return done(err);
+                    }
+                    if(results.rows.length > 0){
+                      data.booked = results.rows
+                      console.log(data.booked);
+                    }
+                    return done(null, data);
+                    
+                  })
+
                   
                 })
                 
