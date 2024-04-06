@@ -654,7 +654,7 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
       console.log(JSON.stringify(earlyData));
       console.log(req.user.booked)
       res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type, tracker: req.user.tracker,
-        date:currentDate, earlyData:earlyData, booked:req.user.booked});
+        date:currentDate, earlyData:earlyData, booked:req.user.booked, id:req.user.profileID});
     }
   );
   
@@ -670,7 +670,7 @@ app.get("/trainer/members", checkNotAuthenticated, (req, res) => {
         throw err;
       }
       const members = results.rows;
-      res.render("members.ejs", {user: req.user.full_name, email:req.user.email, members:members});
+      res.render("members.ejs", {user: req.user.full_name, email:req.user.email, members:members, type: req.user.type});
 
     }
   );
@@ -783,6 +783,67 @@ function updateSessionRefund(session_id){
     );
   }
 }
+function updatePlan(email) {
+  if (email) {
+    client.query(
+      `UPDATE Member
+       SET plan = 'Premium'
+       WHERE email = $1`,
+      [email],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        console.log("Upgraded Plan");
+      }
+    );
+  }
+}
+function cancelPlan(email) {
+  if (email) {
+    client.query(
+      `UPDATE Member
+       SET plan = 'Free'
+       WHERE email = $1`,
+      [email],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        console.log("Cancelled Plan");
+      }
+    );
+  }
+}
+
+
+app.post('/cancelPlan', (req, res) => {
+  // Access the data sent in the request body
+  console.log("aaaaa")
+  const amount = req.body.amount;
+  console.log(amount)
+  console.log(JSON.stringify(req.body));
+  cancelPlan(req.user.email)
+
+
+  res.redirect("/users/dashboard");
+
+});
+
+app.post('/upgradePlan', (req, res) => {
+  // Access the data sent in the request body
+  console.log("aaaaa")
+  const amount = req.body.amount;
+  console.log(amount)
+  console.log(JSON.stringify(req.body));
+  addTransaction("Subscription Payment",req.user.type, req.user.full_name, req.user.profileID, amount);
+  updatePlan(req.user.email)
+
+
+  res.redirect("/users/dashboard");
+
+});
+
 app.post('/bookPaidRefund', (req, res) => {
   // Access the data sent in the request body
 
@@ -866,7 +927,7 @@ app.get("/members/bookings", checkNotAuthenticated, (req, res) => {
   console.log("booked ids " + bookedIds);
   console.log(bookedIds);
   res.render("bookings.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment,
-  bookings:req.user.bookings, plan:req.user.plan, booked: req.user.booked, bookedIds:bookedIds});
+  bookings:req.user.bookings, plan:req.user.plan, booked: req.user.booked, bookedIds:bookedIds, type:req.user.type});
 })
 
 
@@ -879,7 +940,7 @@ app.get("/admin/supplies", checkNotAuthenticated, (req, res) => {
 //Change to correct make bookings file
 app.get("/trainer/bookings", checkNotAuthenticated, (req, res) => {
   res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment
-  , bookings:req.user.bookings, id:req.user.profileID});
+  , bookings:req.user.bookings, id:req.user.profileID, type:req.user.type});
 })
 
 

@@ -31,7 +31,7 @@
                 <span style="color: white;">Fit Track</span>
               </a>
               <a class="sidebar-brand brand-logo-mini" href="/index.html">
-                <span style="color: white;">AB</span> <!-- You can put an abbreviation or logo initials here -->
+                <span style="color: white;">FT</span> <!-- You can put an abbreviation or logo initials here -->
               </a>
           <!-- <a class="sidebar-brand brand-logo" href="index.html"><img src="/assets/images/logo.svg" alt="logo" /></a> -->
           <!-- <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="/assets/images/logo-mini.svg" alt="logo" /></a> -->
@@ -65,8 +65,8 @@
                   <div class="preview-item-content">
                     <p class="preview-subject ellipsis mb-1 text-small">Account settings</p>
                   </div>
-                  
                 </a>
+
                 <div class="dropdown-divider"></div>
 
               </div>
@@ -163,7 +163,10 @@
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item dropdown d-none d-lg-block">
                 <% if (type == "Member" && plan == "Free"){%>
-                  <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" data-toggle="dropdown" aria-expanded="false" href="#">Upgrade Plan</a>
+                  <a class="nav-link btn btn-success upgrade-btn" id="createbuttonDropdown" data-booking-id="<%= id %>" data-toggle="dropdown" aria-expanded="false">Upgrade Plan</a>
+                  <%}%>
+                <% if (type == "Member" && plan == "Premium"){%>
+                  <a class="nav-link btn btn-success demote-btn" id="createbuttonDropdown" data-booking-id="<%= id %>" data-toggle="dropdown" aria-expanded="false">Cancel Plan</a>
                   <%}%>
 
 
@@ -663,6 +666,48 @@
     <!-- endinject -->
     <!-- Custom js for this page -->
     <script src="/assets/js/dashboard.js"></script>
+    <script>
+            $(document).ready(function() {
+        $(".upgrade-btn").click(function() {
+          var id = $(this).data("booking-id");
+          console.log(id)
+          console.log("test");
+          var planName = '<%=plan%>';
+
+          // console.log(JSON.stringify(booking.id));
+
+          if (planName === 'Free') {
+            const amount = 29.99;
+            var creditCardNumber = prompt(`Enter your credit card number, the payment will ${amount} `);
+            var password = prompt("Enter your password:");
+
+
+            $.post("/upgradePlan", { id: id, amount:amount }, function(response) {
+              console.log(response);
+            });
+          }
+        });
+      });
+      $(document).ready(function() {
+        $(".demote-btn").click(function() {
+          var id = $(this).data("booking-id");
+          console.log(id)
+          console.log("test");
+          var planName = '<%=plan%>';
+
+          // console.log(JSON.stringify(booking.id));
+
+          if (planName === 'Premium') {
+            var creditCardNumber = prompt(`Are you sure you want to cancel subscription`);
+
+
+            $.post("/cancelPlan", { id: id}, function(response) {
+              console.log(response);
+            });
+          }
+        });
+      });
+    </script>
     <!-- End custom js for this page -->
   </body>
 </html>
