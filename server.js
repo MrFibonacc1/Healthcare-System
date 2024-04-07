@@ -6,12 +6,22 @@ const flash = require("express-flash");
 const session = require("express-session");
 const { executeQuery, client } = require('./database');
 
+
+
+
+const OpenAI = require("openai");
+
+const openai = new OpenAI();
+
+
 const { initialize, type } = require("./config");
 const e = require('express');
 
 // Create an Express application
 const app = express();
 const port = 4000; // Port number to listen on
+app.use(express.json()); // Add this line to parse JSON bodies
+
 
 app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
@@ -678,6 +688,8 @@ app.get("/trainer/members", checkNotAuthenticated, (req, res) => {
 
 });
 
+
+
 function addTransaction(transaction_type, person_type, person_name, person_id, amount){
   if(transaction_type && person_type && person_name && person_id ){
     client.query(
@@ -937,6 +949,48 @@ app.get("/admin/supplies", checkNotAuthenticated, (req, res) => {
   res.render("supplies.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment});
 })
 
+app.get("/admin/transactions", checkNotAuthenticated, (req, res) => {
+  client.query(
+    `SELECT * FROM transactions`,
+    (err, results) => {
+      if (err) {
+        throw err;
+      }
+      const transactions = results.rows;
+      
+      res.render("transactions.ejs", {user: req.user.full_name, email:req.user.email, transactions:transactions});
+
+    }
+  );
+
+})
+
+app.get("/admin/everyone", checkNotAuthenticated, (req, res) => {
+  
+  client.query(
+    `SELECT * FROM profile WHERE entity_type = 'Member'`,
+    (err, results) => {
+      if (err) {
+        throw err;
+      }
+      const members = results.rows;
+      client.query(
+        `SELECT * FROM profile WHERE entity_type = 'Trainer'`,
+        (err, results) => {
+          if (err) {
+            throw err;
+          }
+          const trainers = results.rows;
+          
+          res.render("everyone.ejs", {user: req.user.full_name, email:req.user.email, members:members, trainers:trainers, type: req.user.type});
+    
+        }
+      );
+    }
+  );
+
+});
+
 //Change to correct make bookings file
 app.get("/trainer/bookings", checkNotAuthenticated, (req, res) => {
   res.render("trainerSession.ejs", {user: req.user.full_name, email:req.user.email, rooms:req.user.rooms, equipment:req.user.equipment
@@ -960,6 +1014,34 @@ app.get("/users/health", checkNotAuthenticated, (req, res) => {
 app.get("/users/profile", checkNotAuthenticated, (req, res) => {
   res.render("profile.ejs", {user: req.user.full_name, email:req.user.email, pass: req.user.password_hash, plan:req.user.plan});
 });
+app.get("/users/ai", checkNotAuthenticated, (req, res) => {
+  res.render("ai.ejs", {user: req.user.full_name, email:req.user.email, plan:req.user.plan, type:req.user.type});
+});
+
+app.post('/chat', async (req, res) => {
+  console.log("body:");
+
+  console.log(req.body);
+  console.log(req);
+
+  const { message } = req.body;
+  // console.log(req)
+  console.log("1");
+
+  console.log(message)
+  const completion = await openai.chat.completions.create({
+    messages: [{ role: "system", content: message }],
+    model: "gpt-3.5-turbo",
+  });
+  console.log("asd");
+  console.log(completion.choices[0].message.content);
+  
+  res.json({ message: completion.choices[0].message.content });
+  console.log("asd");
+  
+
+});
+
 
 //Check auth
 function checkAuthenticated(req, res, next) {
