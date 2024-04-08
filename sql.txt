@@ -15,9 +15,6 @@ CREATE TABLE Admin (
     password_hash VARCHAR(255) NOT NULL
 );
 
-INSERT INTO Admin (full_name, email, password_hash) 
-VALUES ('a', 'a', '$2b$10$qnhtaSzvoqvQeuxq.3mpLOffeqdnLv8HdjCRmIuW6iWQKSog6opZG');
-
 
 CREATE TABLE Trainer (
     id SERIAL PRIMARY KEY,
@@ -26,8 +23,7 @@ CREATE TABLE Trainer (
     password_hash VARCHAR(255) NOT NULL
 );
 
-INSERT INTO Profile (entity_type, full_name, email) 
-VALUES ('Admin', 'a', 'a');
+
 
 
 CREATE TABLE Profile (
@@ -39,6 +35,7 @@ CREATE TABLE Profile (
 	weight_KG INT,
 	height_cm INT,
 	BMI INT,
+    fitnessPlan VARCHAR(100), 
     stepGoal INT
 );
 

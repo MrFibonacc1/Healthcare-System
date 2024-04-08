@@ -102,7 +102,7 @@ function initialize(passport) {
         data.country = results.rows[0].country;
         data.weight = results.rows[0].weight_kg;
         data.height = results.rows[0].height_cm;
-        data.bmi = results.rows[0].bmi;
+        data.fitnessPlan = results.rows[0].fitnessplan;
         data.profileID = results.rows[0].profile_id;
         data.steps = results.rows[0].stepgoal;
         data.type = type;

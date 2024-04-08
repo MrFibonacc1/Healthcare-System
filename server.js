@@ -74,14 +74,16 @@ app.get("/users/logout", (req, res) => {
 app.post("/users/data", async (req, res) => {
   console.log("tttrstststset")
   // console.log(req);
-  let {height, weight, country, steps} = req.body;
+  let {height, weight, country, steps, fitnessPlan} = req.body;
   bmi = 2;
   let errors = [];
+
   console.log({
     height,
     weight,
     country,
-    steps
+    steps,
+    fitnessPlan
   });
 
   // console.log(req.user.full_name);
@@ -100,12 +102,15 @@ app.post("/users/data", async (req, res) => {
   if(!steps){
     steps = req.user.steps
   }
+  if(!fitnessPlan){
+    fitnessPlan = req.user.fitnessPlan
+  }
 
   client.query(
     `UPDATE profile
-    SET country = $1, weight_kg = $2, height_cm = $3, bmi = $4, stepgoal = $5
-    WHERE email = $6`,
-    [country, weight, height, bmi, steps, req.user.email],
+    SET country = $1, weight_kg = $2, height_cm = $3, bmi = $4, stepgoal = $5, fitnessPlan = $6
+    WHERE email = $7`,
+    [country, weight, height, bmi, steps, fitnessPlan, req.user.email],
     (err,results) => {
       if (err) {
         console.log(err);
@@ -643,7 +648,30 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
   const type = req.user.type;
   const currentDate = new Date();
   if(type=="Admin"){
-    res.render("adminDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type});
+
+    client.query(
+      `SELECT * FROM transactions`,
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        const transactions = results.rows;
+
+        let revenue = 0;
+
+        // Iterate over each transaction
+        for (let i = 0; i < transactions.length; i++) {
+          revenue += parseFloat(transactions[i].amount);
+
+        }
+
+        
+        res.render("adminDashboard.ejs", {user: req.user.full_name, email:req.user.email,plan:req.user.plan, transactions:transactions,
+        revenue: revenue});
+  
+      }
+    );
+
     return;
   }
 
@@ -660,11 +688,12 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
         throw err;
       }
       const earlyData = results.rows;
-      console.log("tesrset")
-      console.log(JSON.stringify(earlyData));
-      console.log(req.user.booked)
+      // console.log("tesrset")
+      // console.log(JSON.stringify(earlyData));
+      // console.log(req.user.booked)
+      console.log("fitness " + req.user.fitnessPlan);
       res.render("memberDashboard", { user: req.user.full_name, plan:req.user.plan, type:req.user.type, tracker: req.user.tracker,
-        date:currentDate, earlyData:earlyData, booked:req.user.booked, id:req.user.profileID});
+        date:currentDate, earlyData:earlyData, booked:req.user.booked, id:req.user.profileID, workout:req.user.fitnessPlan});
     }
   );
   
