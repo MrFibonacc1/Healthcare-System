@@ -70,7 +70,7 @@ CREATE TABLE transactions (
     status VARCHAR(100) NOT NULL,
     person_id INT NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (person_id) REFERENCES Profile(profile_id)
 );
 
@@ -110,7 +110,3 @@ CREATE TABLE bookings (
     FOREIGN KEY (member_id) REFERENCES profile(profile_id),
     FOREIGN KEY (session_id) REFERENCES sessions(id)
 );
-
-
-
-
