@@ -257,8 +257,7 @@
                               <td> <%=bookings[i].start_time%> - <%=bookings[i].end_time%></td>
                               
                               
-                              <td> <%=  bookedIds %></td>
-                              <td> <%=  bookings[i].id %></td>
+                        
 
 
 
@@ -353,7 +352,7 @@
 
 
             $.post("/bookPaid", { booking: booking }, function(response) {
-              console.log(response);
+              console.log("tttt");
             });
           } else if (planName === 'Free') {
             console.log("free");
