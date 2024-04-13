@@ -71,6 +71,7 @@ CREATE TABLE transactions (
     person_id INT NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    FOREIGN KEY (person_id) REFERENCES Profile(profile_id)
 );
 
 CREATE TABLE sessions (
