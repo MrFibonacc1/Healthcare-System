@@ -1,9 +1,4 @@
 
-
-INSERT INTO Profile (entity_type, full_name, email) 
-VALUES ('Admin', 'a', 'a');
-
-
 INSERT INTO Member (full_name, email, gender, plan, password_hash) 
 VALUES 
     ('John', 'john@gmail.com', 'Male', 'Premium', '$2b$10$qnhtaSzvoqvQeuxq.3mpLOffeqdnLv8HdjCRmIuW6iWQKSog6opZG'),
