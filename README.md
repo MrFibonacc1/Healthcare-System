@@ -1,5 +1,7 @@
 Huzaifa Rehan
-Comp 3005 Project 2
+Project 
+
+Documentation: https://docs.google.com/document/d/1HvfAp2Wf0eBg9uygC3IyhUTfA5e_NIRjNQf4rD5M75A/edit?usp=sharing 
 
 Read me:
 
