@@ -2,6 +2,14 @@
     "version": 2,
     "routes": [
       {
+        "src": "/public/(.*)",
+        "dest": "/public/$1"
+      },
+      {
+        "src": "/view/(.*)",
+        "dest": "/view/$1"
+      },
+      {
         "src": "/(.*)",
         "dest": "/server.js"
       }
