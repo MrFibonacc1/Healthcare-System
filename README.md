@@ -7,6 +7,8 @@ Read me:
 
 To run this software clone the repo and run npm i to install all dependecies.
 
+Also fill in .env file with your credentials
+
 If you have open ai api key, export it in your current directory like this:
 
 'Export <insert key>'
